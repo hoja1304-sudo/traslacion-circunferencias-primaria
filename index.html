@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123a5a">
+  <title>Traslación de circunferencias</title>
+  <style>
+    :root {
+      --ink: #102f49;
+      --blue: #166995;
+      --blue-dark: #123a5a;
+      --sky: #eaf6fb;
+      --paper: #fffdf8;
+      --gold: #f3b942;
+      --green: #177b4e;
+      --green-soft: #e5f7ee;
+      --grid: #cfe0ea;
+      --axis: #123a5a;
+      --ghost: #b0790c;
+      --shadow: 0 14px 34px rgba(15, 47, 73, .14);
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { background: #dcecf3; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(243,185,66,.22), transparent 24rem),
+        linear-gradient(145deg, #eef8fb 0%, #dcecf3 100%);
+      font-family: Arial, Helvetica, sans-serif; line-height: 1.45;
+    }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 4px solid rgba(243,185,66,.72); outline-offset: 3px; }
+    .wrap { width: min(1160px, 100%); margin: 0 auto; padding: clamp(14px, 3vw, 32px); }
+
+    header.hero {
+      overflow: hidden; border-radius: 26px; color: white;
+      background: linear-gradient(135deg, #123a5a, #176f98); box-shadow: var(--shadow);
+      padding: clamp(22px, 4vw, 40px) clamp(20px, 4vw, 44px); text-align: center;
+    }
+    header.hero h1 { margin: 0; font-size: clamp(1.5rem, 4.4vw, 2.6rem); line-height: 1.1; }
+    header.hero p { margin: 12px auto 0; max-width: 660px; color: #dceff8; font-size: clamp(.98rem, 2.1vw, 1.12rem); }
+
+    .tabs { display: flex; gap: 8px; margin: 20px 0 0; flex-wrap: wrap; }
+    .tab { border: 0; border-radius: 14px 14px 0 0; padding: 12px 22px; min-height: 46px;
+      background: rgba(255,253,248,.7); color: var(--blue-dark); font-weight: 800; font-size: 1rem; }
+    .tab.active { background: var(--paper); box-shadow: 0 -4px 14px rgba(18,58,90,.08); }
+
+    .panel { border: 1px solid rgba(18,58,90,.14); border-radius: 0 22px 22px 22px;
+      background: var(--paper); box-shadow: var(--shadow); padding: clamp(16px, 3vw, 28px); }
+
+    .lab { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(16px, 3vw, 26px); align-items: start; }
+    @media (max-width: 860px) { .lab { grid-template-columns: 1fr; } }
+
+    .plane-card { border: 1px solid #c8dbe4; border-radius: 18px; background: white; padding: 10px; }
+    .plane { display: block; width: 100%; height: auto; }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 8px 2px 2px; font-size: .86rem; color: #46626f; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dotk { width: 13px; height: 13px; border-radius: 50%; border: 2px solid; }
+    .dotk.b { border-color: var(--blue); background: rgba(22,105,149,.22); }
+    .dotk.g { border-color: var(--green); background: rgba(23,123,78,.22); }
+
+    .controls h2 { margin: 0 0 12px; font-size: 1.12rem; color: var(--blue-dark); }
+    .lab-title { text-align: center; }
+    .instr-row { display: flex; justify-content: center; margin: 0 0 16px; }
+    .instr-btn { display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--blue);
+      border-radius: 999px; padding: 9px 20px; min-height: 44px; background: var(--sky); color: var(--blue-dark);
+      font-weight: 800; box-shadow: 0 4px 0 #cbe0ea; transition: transform .12s, box-shadow .12s, background .12s; }
+    .instr-btn:hover { transform: translateY(-2px); }
+    .instr-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #cbe0ea; }
+    .instr-btn.speaking { background: var(--gold); border-color: #d99e1c; color: #6a4a06; box-shadow: 0 4px 0 #d9b45f; }
+    .instr-btn .instr-ic { font-size: 1.15rem; line-height: 1; }
+    .hint { margin: 0 0 14px; color: #56707f; font-size: .92rem; }
+
+    .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 340px; margin: 0 auto; }
+    .dir { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+      min-height: 76px; padding: 8px; border: 2px solid #bcd2dd; border-radius: 16px; background: white;
+      color: var(--blue-dark); font-weight: 800; box-shadow: 0 5px 0 #d3e1e7; transition: transform .12s, box-shadow .12s, border-color .12s; }
+    .dir:hover { border-color: var(--blue); transform: translateY(-2px); }
+    .dir:active { transform: translateY(3px); box-shadow: 0 2px 0 #d3e1e7; }
+    .dir .arrow { font-size: 1.5rem; line-height: 1; }
+    .dir .lbl { font-size: .82rem; }
+    .dir .count { min-width: 30px; padding: 1px 8px; border-radius: 999px; background: var(--sky); color: var(--blue-dark); font-size: .95rem; }
+    .dir.armed .count { background: var(--gold); }
+    .n { grid-column: 2; grid-row: 1; } .o { grid-column: 1; grid-row: 2; }
+    .go-cell { grid-column: 2; grid-row: 2; } .e { grid-column: 3; grid-row: 2; } .s { grid-column: 2; grid-row: 3; }
+    .go { width: 100%; min-height: 76px; border: 0; border-radius: 16px; color: white; background: var(--green);
+      font-weight: 900; font-size: .96rem; box-shadow: 0 5px 0 #0f5836; }
+    .go:active { transform: translateY(3px); box-shadow: 0 2px 0 #0f5836; }
+    .go:disabled { opacity: .5; cursor: default; box-shadow: none; }
+
+    .row-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; justify-content: center; }
+    .ghost-btn { border: 2px solid #bcd2dd; border-radius: 13px; padding: 10px 16px; min-height: 44px; background: white; color: var(--blue-dark); font-weight: 700; }
+    .ghost-btn:hover { border-color: var(--blue); }
+
+    .move-note { margin: 16px 0 0; padding: 11px 14px; border-radius: 13px; background: var(--sky); color: #1c4d67; font-size: .95rem; min-height: 46px; }
+    .move-note strong { color: var(--blue-dark); }
+
+    /* Cuadro de cálculo con suma y resta */
+    .op-box { margin-top: 16px; border: 1px solid #e0c98a; border-radius: 16px; overflow: hidden; background: #fffdf5; }
+    .op-box .op-head { padding: 10px 15px; background: var(--gold); color: #6a4a06; font-weight: 800; }
+    .op-audio { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 15px 4px; }
+    .mini-audio { display: inline-flex; align-items: center; gap: 6px; border: 2px solid #e0c98a;
+      border-radius: 999px; padding: 7px 14px; min-height: 40px; background: #fffdf5; color: #7a5b14;
+      font-weight: 800; font-size: .9rem; box-shadow: 0 3px 0 #ecdcae; transition: transform .12s, box-shadow .12s, background .12s; }
+    .mini-audio:hover { transform: translateY(-2px); border-color: #d99e1c; }
+    .mini-audio:active { transform: translateY(2px); box-shadow: 0 1px 0 #ecdcae; }
+    .mini-audio.speaking { background: var(--gold); border-color: #d99e1c; color: #5a3e05; box-shadow: 0 3px 0 #d9b45f; }
+    .mini-audio .instr-ic { font-size: 1.05rem; line-height: 1; }
+    .op-box dl { margin: 0; display: grid; grid-template-columns: auto 1fr; }
+    .op-box dt { padding: 9px 15px; border-bottom: 1px solid #efe6cd; color: #7a5b14; font-weight: 700; font-size: .9rem; }
+    .op-box dd { margin: 0; padding: 9px 15px; border-bottom: 1px solid #efe6cd; font-weight: 800; color: #4a3a12; }
+    .op-box dl > :nth-last-child(1), .op-box dl > :nth-last-child(2) { border-bottom: 0; }
+    .op-box .calc { color: #12344b; }
+    .op-empty { padding: 13px 15px; color: #8a7a52; font-size: .92rem; }
+
+    /* Tarjeta de datos + representación algebraica */
+    .card { margin-top: 18px; border: 1px solid #c9dae4; border-radius: 16px; overflow: hidden; background: white; }
+    .card .card-head { padding: 11px 16px; background: var(--blue-dark); color: white; font-weight: 800; }
+    .card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; }
+    .card dt { padding: 11px 16px; border-bottom: 1px solid #e3edf2; background: #f2f8fb; color: #37596e; font-weight: 700; }
+    .card dd { margin: 0; padding: 11px 16px; border-bottom: 1px solid #e3edf2; font-weight: 700; color: #12344b; }
+    .algebra { padding: 14px 16px; border-top: 2px solid #e3edf2; }
+    .alg-title { margin: 0 0 8px; font-weight: 800; color: var(--blue-dark); }
+    .alg-line { margin: 6px 0; color: #33566b; font-size: .95rem; }
+    .alg-note { margin: 4px 0 10px; color: #6d8695; font-size: .86rem; }
+    .eq { font-style: normal; font-weight: 800; color: #12344b; white-space: nowrap; }
+    .eq.big { font-size: 1.25rem; margin: 4px 0 0; }
+    .eq sup { font-size: .72em; }
+
+    footer.credit { margin: 22px 0 0; text-align: center; color: #667985; font-size: .86rem; }
+    footer.credit strong { color: #435b6a; }
+    @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1>Traslación de circunferencias</h1>
+      <p>Mueve la circunferencia por el plano con los botones de dirección y descubre cómo cambian su centro y su ecuación.</p>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true" type="button">Laboratorio</button>
+    </div>
+
+    <section class="panel" role="tabpanel" aria-label="Laboratorio">
+      <div class="lab">
+        <div>
+          <div class="plane-card">
+            <svg id="plane" class="plane" viewBox="0 0 560 560" role="img" aria-label="Plano cartesiano de menos diez a diez con una circunferencia de radio 1 que se puede trasladar"></svg>
+          </div>
+          <div class="legend">
+            <span><i class="dotk b"></i> Azul: posición de salida</span>
+            <span><i class="dotk g"></i> Verde: nueva posición</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <h2 class="lab-title">Indica la traslación</h2>
+          <div class="instr-row">
+            <button id="instrBtn" class="instr-btn" type="button" aria-pressed="false">
+              <span class="instr-ic" aria-hidden="true">🔊</span><span class="instr-txt" data-play="Instrucciones" data-pause="Pausar">Instrucciones</span>
+            </button>
+          </div>
+          <div class="pad">
+            <button class="dir n" type="button" data-dir="norte" aria-label="Norte, hacia arriba">
+              <span class="arrow" aria-hidden="true">↑</span><span class="lbl">Norte</span><span class="count" data-count="norte">0</span></button>
+            <button class="dir o" type="button" data-dir="oeste" aria-label="Oeste, hacia la izquierda">
+              <span class="arrow" aria-hidden="true">←</span><span class="lbl">Oeste</span><span class="count" data-count="oeste">0</span></button>
+            <div class="go-cell"><button id="go" class="go" type="button">Trasladar</button></div>
+            <button class="dir e" type="button" data-dir="este" aria-label="Este, hacia la derecha">
+              <span class="arrow" aria-hidden="true">→</span><span class="lbl">Este</span><span class="count" data-count="este">0</span></button>
+            <button class="dir s" type="button" data-dir="sur" aria-label="Sur, hacia abajo">
+              <span class="arrow" aria-hidden="true">↓</span><span class="lbl">Sur</span><span class="count" data-count="sur">0</span></button>
+          </div>
+
+          <div class="row-actions">
+            <button id="clearSel" class="ghost-btn" type="button">Reiniciar selección</button>
+            <button id="reset" class="ghost-btn" type="button">Volver al inicio (2, 3)</button>
+          </div>
+
+          <p id="moveNote" class="move-note" aria-live="polite">Selecciona una traslación y presiona <strong>Trasladar</strong>.</p>
+
+          <div class="op-box" aria-live="polite">
+            <div class="op-head">La traslación con suma y resta</div>
+            <div class="op-audio">
+              <button class="mini-audio" type="button" data-audio="horiz" aria-pressed="false">
+                <span class="instr-ic" aria-hidden="true">🔊</span> Traslación horizontal</button>
+              <button class="mini-audio" type="button" data-audio="vert" aria-pressed="false">
+                <span class="instr-ic" aria-hidden="true">🔊</span> Traslación vertical</button>
+            </div>
+            <div id="opBody"></div>
+          </div>
+
+          <div class="card" aria-live="polite">
+            <div class="card-head">Datos de la circunferencia</div>
+            <dl>
+              <dt>Centro</dt><dd id="outCenter">(2, 3)</dd>
+              <dt>Radio</dt><dd id="outRadius">1 cm</dd>
+            </dl>
+            <div class="algebra">
+              <p class="alg-title">Representación algebraica de la circunferencia</p>
+              <p class="alg-line"><span class="eq">(x − h)<sup>2</sup> + (y − k)<sup>2</sup> = r<sup>2</sup></span></p>
+              <p class="alg-note">donde (h, k) son las coordenadas del centro y r es el radio.</p>
+              <p class="alg-line" id="algSub"></p>
+              <p class="eq big" id="outEq"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="credit"><strong>Elaborado por: Alberto Jiménez Ruiz</strong><br>Asesor Regional de Matemática DRE-Cartago-DAP-2026</footer>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+      const $ = (s, r = document) => r.querySelector(s);
+      const NS = 'http://www.w3.org/2000/svg';
+      const el = (name, attrs) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+      // --- Plano de -10 a 10 ---
+      const N = 10, unit = 24, ox = 280, oy = 280;
+      const PX = x => ox + x * unit, PY = y => oy - y * unit;
+      const svg = $('#plane');
+
+      for (let i = -N; i <= N; i++) {
+        svg.appendChild(el('line', { x1: PX(i), y1: PY(-N), x2: PX(i), y2: PY(N), stroke: 'var(--grid)', 'stroke-width': 1 }));
+        svg.appendChild(el('line', { x1: PX(-N), y1: PY(i), x2: PX(N), y2: PY(i), stroke: 'var(--grid)', 'stroke-width': 1 }));
+      }
+      // ejes prolongados más allá del 10 y del -10, con punta de flecha en los cuatro extremos
+      const EXT = 20;
+      const xE = PX(N) + EXT, xW = PX(-N) - EXT, yN = PY(N) - EXT, yS = PY(-N) + EXT;
+      svg.appendChild(el('line', { x1: xW, y1: PY(0), x2: xE, y2: PY(0), stroke: 'var(--axis)', 'stroke-width': 2.5 }));
+      svg.appendChild(el('line', { x1: PX(0), y1: yN, x2: PX(0), y2: yS, stroke: 'var(--axis)', 'stroke-width': 2.5 }));
+      svg.appendChild(el('path', { d: `M${xE} ${PY(0)} l-12 -7 v14 z`, fill: 'var(--axis)' }));       // Este
+      svg.appendChild(el('path', { d: `M${xW} ${PY(0)} l12 -7 v14 z`, fill: 'var(--axis)' }));        // Oeste
+      svg.appendChild(el('path', { d: `M${PX(0)} ${yN} l-7 12 h14 z`, fill: 'var(--axis)' }));        // Norte
+      svg.appendChild(el('path', { d: `M${PX(0)} ${yS} l-7 -12 h14 z`, fill: 'var(--axis)' }));       // Sur
+      const txt = (x, y, s, extra) => { const e = el('text', Object.assign({ x, y, 'font-family': 'Arial', fill: '#37596e' }, extra || {})); e.textContent = s; svg.appendChild(e); };
+      txt(xE, PY(0) + 27, 'este', { 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 700 });
+      txt(PX(0) + 10, yN + 4, 'norte', { 'font-size': 14, 'font-weight': 700 });
+      // numeración de 1 en 1 (números más grandes)
+      for (let i = -N; i <= N; i++) {
+        if (i === 0) continue;
+        txt(PX(i), PY(0) + 18, String(i), { 'text-anchor': 'middle', 'font-size': 12.5, 'font-weight': 600, fill: '#5b7688' });
+        txt(PX(0) - 9, PY(i) + 4.5, String(i), { 'text-anchor': 'end', 'font-size': 12.5, 'font-weight': 600, fill: '#5b7688' });
+      }
+      txt(PX(0) - 8, PY(0) + 17, '0', { 'text-anchor': 'end', 'font-size': 12.5, 'font-weight': 600, fill: '#5b7688' });
+
+      // preview (fantasma punteado) + trayecto en "L" (catetos)
+      const ghostPath = el('polyline', { fill: 'none', stroke: 'var(--ghost)', 'stroke-width': 2, 'stroke-dasharray': '7 6', 'stroke-linejoin': 'round', 'stroke-linecap': 'round', opacity: 0 });
+      const moveTrail = el('polyline', { fill: 'none', stroke: 'var(--ghost)', 'stroke-width': 2.5, 'stroke-dasharray': '7 6', 'stroke-linejoin': 'round', 'stroke-linecap': 'round', opacity: 0 });
+      const ghost = el('circle', { r: unit, fill: 'none', stroke: 'var(--ghost)', 'stroke-width': 2.5, 'stroke-dasharray': '7 6', opacity: 0 });
+      svg.appendChild(ghostPath); svg.appendChild(moveTrail); svg.appendChild(ghost);
+
+      const BLUE = { stroke: '#166995', fill: 'rgba(22,105,149,.22)' };
+      const GREEN = { stroke: '#177b4e', fill: 'rgba(23,123,78,.22)' };
+
+      function makeGroup() {
+        const c = el('circle', { r: unit, 'stroke-width': 3 });
+        const d = el('circle', { r: 4.5 });
+        const l = el('text', { 'font-family': 'Arial', 'font-size': 12, 'font-weight': 700, 'text-anchor': 'middle' });
+        svg.appendChild(c); svg.appendChild(d); svg.appendChild(l);
+        return { c, d, l };
+      }
+      // origen (azul, salida) primero; luego la circunferencia activa encima
+      const originG = makeGroup();
+      const movingG = makeGroup();
+
+      function paint(g, col) { g.c.setAttribute('stroke', col.stroke); g.c.setAttribute('fill', col.fill); g.d.setAttribute('fill', col.stroke); g.l.setAttribute('fill', '#123a5a'); }
+      function place(g, x, y) {
+        const cx = PX(x), cy = PY(y);
+        g.c.setAttribute('cx', cx); g.c.setAttribute('cy', cy);
+        g.d.setAttribute('cx', cx); g.d.setAttribute('cy', cy);
+        g.l.setAttribute('x', cx); g.l.setAttribute('y', cy + 16);
+        g.l.textContent = `(${round(x)}, ${round(y)})`;
+      }
+      function showG(g, on) { [g.c, g.d, g.l].forEach(e => e.setAttribute('opacity', on ? 1 : 0)); }
+      const round = v => Math.round(v * 100) / 100;
+
+      // --- Estado ---
+      const startPos = { x: 2, y: 3 }, radius = 1;
+      let center = { ...startPos };
+      let hasMoved = false, animating = false;
+      let firstAxis = null; // 'h' u 'v': eje que se empezó a mover primero
+      const counts = { este: 0, oeste: 0, norte: 0, sur: 0 };
+
+      const axisOf = dir => (dir === 'este' || dir === 'oeste') ? 'h' : 'v';
+      // puntos del recorrido en "L" según el orden elegido
+      function pathPoints(from, dx, dy, order) {
+        const pts = [{ x: from.x, y: from.y }];
+        const addH = () => { const last = pts[pts.length - 1]; if (dx !== 0) pts.push({ x: from.x + dx, y: last.y }); };
+        const addV = () => { const last = pts[pts.length - 1]; if (dy !== 0) pts.push({ x: last.x, y: from.y + dy }); };
+        if (order === 'v') { addV(); addH(); } else { addH(); addV(); }
+        return pts;
+      }
+      const ptsToStr = pts => pts.map(p => `${PX(p.x)},${PY(p.y)}`).join(' ');
+
+      const signed = (base, d) => `${base} ${d >= 0 ? '+' : '−'} ${Math.abs(d)}`;
+
+      function eqHTML(h, k) {
+        const term = (v, vn) => v === 0 ? `${vn}<sup>2</sup>` : `(${vn} ${v > 0 ? '−' : '+'} ${Math.abs(v)})<sup>2</sup>`;
+        return `${term(h, 'x')} + ${term(k, 'y')} = 1`;
+      }
+      function updateResults() {
+        $('#outCenter').textContent = `(${center.x}, ${center.y})`;
+        $('#outRadius').textContent = `${radius} cm`;
+        $('#algSub').innerHTML = `Se sustituye <strong>h = ${center.x}</strong>, <strong>k = ${center.y}</strong> y <strong>r = 1</strong>:`;
+        $('#outEq').innerHTML = eqHTML(center.x, center.y);
+      }
+
+      const delta = () => ({ dx: counts.este - counts.oeste, dy: counts.norte - counts.sur });
+      const target = () => { const { dx, dy } = delta(); return { x: center.x + dx, y: center.y + dy }; };
+
+      function describe(c) {
+        const p = [];
+        if (c.este) p.push(`${c.este} al este`);
+        if (c.oeste) p.push(`${c.oeste} al oeste`);
+        if (c.norte) p.push(`${c.norte} al norte`);
+        if (c.sur) p.push(`${c.sur} al sur`);
+        return p.join(' y ');
+      }
+      function refreshCounts() {
+        document.querySelectorAll('[data-count]').forEach(sp => {
+          const d = sp.getAttribute('data-count');
+          sp.textContent = counts[d];
+          sp.closest('.dir').classList.toggle('armed', counts[d] > 0);
+        });
+      }
+
+      function opRows(from, dx, dy, desc) {
+        const to = { x: from.x + dx, y: from.y + dy };
+        return `<dl>
+          <dt>Posición inicial del centro</dt><dd>(${from.x}, ${from.y})</dd>
+          <dt>Traslación</dt><dd>${desc}</dd>
+          <dt>Traslación del centro</dt><dd class="calc">(${signed(from.x, dx)}, ${signed(from.y, dy)})</dd>
+          <dt>Nueva posición del centro</dt><dd>(${to.x}, ${to.y})</dd>
+        </dl>`;
+      }
+      function opEmpty(msg) { $('#opBody').innerHTML = `<p class="op-empty">${msg}</p>`; }
+      function updateOpPreview() {
+        const { dx, dy } = delta();
+        if (dx === 0 && dy === 0) { opEmpty('Selecciona una dirección para ver el cálculo del nuevo centro.'); return; }
+        $('#opBody').innerHTML = opRows(center, dx, dy, describe(counts));
+      }
+
+      function showGhost() {
+        const { dx, dy } = delta(), tg = target(), note = $('#moveNote');
+        if (dx === 0 && dy === 0) {
+          ghost.setAttribute('opacity', 0); ghostPath.setAttribute('opacity', 0);
+          note.innerHTML = 'Selecciona una traslación y presiona <strong>Trasladar</strong>.';
+          $('#go').disabled = true; return;
+        }
+        const inside = Math.abs(tg.x) <= N && Math.abs(tg.y) <= N;
+        ghost.setAttribute('cx', PX(tg.x)); ghost.setAttribute('cy', PY(tg.y)); ghost.setAttribute('opacity', inside ? 1 : .3);
+        ghostPath.setAttribute('points', ptsToStr(pathPoints(center, dx, dy, firstAxis || 'h')));
+        ghostPath.setAttribute('opacity', inside ? .9 : .3);
+        $('#go').disabled = !inside || animating;
+        note.innerHTML = inside
+          ? `Traslación: <strong>${describe(counts)}</strong>. Nueva posición del centro: <strong>(${tg.x}, ${tg.y})</strong>.`
+          : `La nueva posición (${tg.x}, ${tg.y}) queda fuera del plano (−10 a 10). Ajusta la traslación.`;
+      }
+
+      function animate(g, from, dx, dy, order, done) {
+        animating = true; $('#go').disabled = true;
+        ghost.setAttribute('opacity', 0); ghostPath.setAttribute('opacity', 0);
+        const pts = pathPoints(from, dx, dy, order);
+        const end = pts[pts.length - 1];
+        // longitud (en unidades) de cada tramo del recorrido en "L"
+        const segLen = []; let total = 0;
+        for (let i = 1; i < pts.length; i++) {
+          const l = Math.abs(pts[i].x - pts[i - 1].x) + Math.abs(pts[i].y - pts[i - 1].y);
+          segLen.push(l); total += l;
+        }
+        const drawTrail = trail => { moveTrail.setAttribute('points', ptsToStr(trail)); moveTrail.setAttribute('opacity', .9); };
+        let fin = false;
+        const finish = () => { if (fin) return; fin = true; place(g, end.x, end.y); drawTrail(pts); animating = false; done(); };
+        if (total === 0) { finish(); return; }
+        // posición y rastro acumulado a una distancia dada
+        function at(dist) {
+          let d = dist, i = 0; const trail = [pts[0]];
+          while (i < segLen.length && d >= segLen[i]) { d -= segLen[i]; i++; trail.push(pts[i]); }
+          if (i >= segLen.length) return { pos: end, trail };
+          const a = pts[i], b = pts[i + 1], f = segLen[i] === 0 ? 0 : d / segLen[i];
+          const pos = { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f };
+          trail.push(pos); return { pos, trail };
+        }
+        const dur = Math.min(1800, Math.max(600, total * 260)), t0 = performance.now();
+        const ease = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        (function step(now) {
+          if (fin) return;
+          const p = Math.min(1, (now - t0) / dur), e = ease(p);
+          const r = at(total * e); place(g, r.pos.x, r.pos.y); drawTrail(r.trail);
+          if (p < 1) requestAnimationFrame(step); else finish();
+        })(performance.now());
+        setTimeout(finish, dur + 300); // respaldo si la pestaña está oculta
+      }
+
+      // --- Eventos ---
+      document.querySelectorAll('.dir').forEach(btn => btn.addEventListener('click', () => {
+        if (animating) return;
+        if (firstAxis === null) firstAxis = axisOf(btn.dataset.dir);
+        counts[btn.dataset.dir]++; refreshCounts(); showGhost(); updateOpPreview();
+      }));
+
+      $('#go').addEventListener('click', () => {
+        if (animating) return;
+        const { dx, dy } = delta(); if (dx === 0 && dy === 0) return;
+        const tg = target(); if (Math.abs(tg.x) > N || Math.abs(tg.y) > N) return;
+        const from = { ...center }, desc = describe(counts), order = firstAxis || 'h';
+        // circunferencia de salida en azul (queda visible)
+        place(originG, from.x, from.y); paint(originG, BLUE); showG(originG, true);
+        // circunferencia nueva en verde (se anima desde la salida por los catetos)
+        paint(movingG, GREEN); hasMoved = true;
+        moveTrail.setAttribute('opacity', 0); // reinicia el rastro anterior
+        animate(movingG, from, dx, dy, order, () => {
+          center = tg;
+          counts.este = counts.oeste = counts.norte = counts.sur = 0;
+          firstAxis = null;
+          refreshCounts(); updateResults();
+          $('#opBody').innerHTML = opRows(from, dx, dy, desc);
+          $('#moveNote').innerHTML = `Se trasladó <strong>${desc}</strong><br>El centro está ahora en <strong>(${center.x}, ${center.y})</strong>.`;
+          $('#go').disabled = true;
+        });
+      });
+
+      $('#clearSel').addEventListener('click', () => {
+        if (animating) return;
+        counts.este = counts.oeste = counts.norte = counts.sur = 0;
+        firstAxis = null;
+        refreshCounts(); showGhost(); updateOpPreview();
+      });
+
+      $('#reset').addEventListener('click', () => {
+        if (animating) return;
+        center = { ...startPos }; hasMoved = false;
+        counts.este = counts.oeste = counts.norte = counts.sur = 0;
+        firstAxis = null;
+        showG(originG, false);
+        moveTrail.setAttribute('opacity', 0);
+        paint(movingG, BLUE); place(movingG, center.x, center.y);
+        refreshCounts(); updateResults(); showGhost();
+        opEmpty('Selecciona una dirección para ver el cálculo del nuevo centro.');
+      });
+
+      // --- Audios hablados (español neutro) ---
+      const audioTexts = {
+        instr: 'Toca cada dirección (Este, Norte, Oeste o Sur) para desplazar el centro de la circunferencia una unidad hacia la dirección que deseas. Luego presiona la tecla Trasladar para animar la traslación.',
+        horiz: 'Al trasladar el centro hacia el Este, o hacia la derecha, se suma el valor indicado a la coordenada equis del centro. Pero si se indica que se desplaza hacia el Oeste, o hacia la izquierda, se le resta el valor del desplazamiento a la coordenada equis del centro.',
+        vert: 'Al trasladar el centro hacia el Norte, o hacia arriba, se suma el valor indicado a la coordenada ye del centro. Pero si se indica que se desplaza hacia el Sur, o hacia abajo, se le resta el valor del desplazamiento a la coordenada ye del centro.'
+      };
+      const synth = window.speechSynthesis;
+      let curBtn = null;
+
+      function pickSpanishVoice() {
+        if (!synth) return null;
+        const vs = synth.getVoices();
+        return vs.find(v => /^es-(419|US|MX)/i.test(v.lang))
+            || vs.find(v => /^es/i.test(v.lang)) || null;
+      }
+      function setBtn(btn, on) {
+        if (!btn) return;
+        btn.classList.toggle('speaking', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const t = btn.querySelector('[data-play]');
+        if (t) t.textContent = on ? t.getAttribute('data-pause') : t.getAttribute('data-play');
+      }
+      function playAudio(text, btn) {
+        if (!synth) { $('#moveNote').textContent = text; return; }
+        if (curBtn === btn) { // mismo botón: pausar / reanudar
+          if (synth.speaking && !synth.paused) { synth.pause(); setBtn(btn, false); return; }
+          if (synth.paused) { synth.resume(); setBtn(btn, true); return; }
+        }
+        synth.cancel();                       // detiene cualquier otro audio en curso
+        if (curBtn && curBtn !== btn) setBtn(curBtn, false);
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-419'; u.rate = 0.98; u.pitch = 1;
+        const v = pickSpanishVoice(); if (v) u.voice = v;
+        u.onend = () => { setBtn(btn, false); if (curBtn === btn) curBtn = null; };
+        u.onerror = () => { setBtn(btn, false); if (curBtn === btn) curBtn = null; };
+        curBtn = btn; setBtn(btn, true); synth.speak(u);
+      }
+      $('#instrBtn').addEventListener('click', () => playAudio(audioTexts.instr, $('#instrBtn')));
+      document.querySelectorAll('[data-audio]').forEach(b =>
+        b.addEventListener('click', () => playAudio(audioTexts[b.dataset.audio], b)));
+      // las voces pueden cargarse de forma diferida
+      if (synth && typeof synth.onvoiceschanged !== 'undefined') synth.onvoiceschanged = pickSpanishVoice;
+
+      // init
+      paint(movingG, BLUE); place(movingG, center.x, center.y); showG(movingG, true);
+      showG(originG, false);
+      updateResults(); refreshCounts(); showGhost();
+      opEmpty('Selecciona una dirección para ver el cálculo del nuevo centro.');
+    })();
+  </script>
+</body>
+</html>
