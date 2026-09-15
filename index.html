@@ -177,8 +177,8 @@
           </div>
 
           <div class="row-actions">
-            <button id="clearSel" class="ghost-btn" type="button">Reiniciar selección</button>
-            <button id="reset" class="ghost-btn" type="button">Volver al inicio (2, 3)</button>
+            <button id="clearSel" class="ghost-btn" type="button">Reiniciar</button>
+            <button id="reset" class="ghost-btn" type="button">Volver al inicio</button>
           </div>
 
           <p id="moveNote" class="move-note" aria-live="polite">Selecciona una traslación y presiona <strong>Trasladar</strong>.</p>
@@ -205,6 +205,7 @@
               <p class="alg-line"><span class="eq">(x − h)<sup>2</sup> + (y − k)<sup>2</sup> = r<sup>2</sup></span></p>
               <p class="alg-note">donde (h, k) son las coordenadas del centro y r es el radio.</p>
               <p class="alg-line" id="algSub"></p>
+              <p class="eq big" id="outEqSub"></p>
               <p class="eq big" id="outEq"></p>
             </div>
           </div>
@@ -274,7 +275,7 @@
       function paint(g, col) { g.c.setAttribute('stroke', col.stroke); g.c.setAttribute('fill', col.fill); g.d.setAttribute('fill', col.stroke); g.l.setAttribute('fill', '#123a5a'); }
       function place(g, x, y) {
         const cx = PX(x), cy = PY(y);
-        g.c.setAttribute('cx', cx); g.c.setAttribute('cy', cy);
+        g.c.setAttribute('cx', cx); g.c.setAttribute('cy', cy); g.c.setAttribute('r', radius * unit);
         g.d.setAttribute('cx', cx); g.d.setAttribute('cy', cy);
         g.l.setAttribute('x', cx); g.l.setAttribute('y', cy + 16);
         g.l.textContent = `(${round(x)}, ${round(y)})`;
@@ -283,11 +284,21 @@
       const round = v => Math.round(v * 100) / 100;
 
       // --- Estado ---
-      const startPos = { x: 2, y: 3 }, radius = 1;
+      let radius = 1;                 // radio actual (1, 2 o 3)
+      let startPos = { x: 2, y: 3 };  // posición donde apareció la circunferencia
       let center = { ...startPos };
-      let hasMoved = false, animating = false;
+      let hasMoved = false, animating = false, outWarned = false;
       let firstAxis = null; // 'h' u 'v': eje que se empezó a mover primero
       const counts = { este: 0, oeste: 0, norte: 0, sur: 0 };
+
+      const randInt = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+      // genera radio (1-3) y centro aleatorio de modo que toda la circunferencia quede dentro del plano
+      function generateCircle() {
+        radius = randInt(1, 3);
+        const lim = N - radius;
+        startPos = { x: randInt(-lim, lim), y: randInt(-lim, lim) };
+        center = { ...startPos };
+      }
 
       const axisOf = dir => (dir === 'este' || dir === 'oeste') ? 'h' : 'v';
       // puntos del recorrido en "L" según el orden elegido
@@ -302,15 +313,22 @@
 
       const signed = (base, d) => `${base} ${d >= 0 ? '+' : '−'} ${Math.abs(d)}`;
 
-      function eqHTML(h, k) {
+      const nf = v => v < 0 ? '−' + Math.abs(v) : String(v); // negativos con signo menos tipográfico
+      // Paso 1: sustitución tal cual (r sin elevar y, si es negativo, x − −3)
+      function eqSub(h, k, r) {
+        return `(x − ${nf(h)})<sup>2</sup> + (y − ${nf(k)})<sup>2</sup> = ${r}<sup>2</sup>`;
+      }
+      // Paso 2: forma simplificada (signos resueltos y r²)
+      function eqHTML(h, k, r) {
         const term = (v, vn) => v === 0 ? `${vn}<sup>2</sup>` : `(${vn} ${v > 0 ? '−' : '+'} ${Math.abs(v)})<sup>2</sup>`;
-        return `${term(h, 'x')} + ${term(k, 'y')} = 1`;
+        return `${term(h, 'x')} + ${term(k, 'y')} = ${r * r}`;
       }
       function updateResults() {
         $('#outCenter').textContent = `(${center.x}, ${center.y})`;
         $('#outRadius').textContent = `${radius} cm`;
-        $('#algSub').innerHTML = `Se sustituye <strong>h = ${center.x}</strong>, <strong>k = ${center.y}</strong> y <strong>r = 1</strong>:`;
-        $('#outEq').innerHTML = eqHTML(center.x, center.y);
+        $('#algSub').innerHTML = `Se sustituye <strong>h = ${center.x}</strong>, <strong>k = ${center.y}</strong> y <strong>r = ${radius}</strong>:`;
+        $('#outEqSub').innerHTML = eqSub(center.x, center.y, radius);
+        $('#outEq').innerHTML = eqHTML(center.x, center.y, radius);
       }
 
       const delta = () => ({ dx: counts.este - counts.oeste, dy: counts.norte - counts.sur });
@@ -353,16 +371,20 @@
         if (dx === 0 && dy === 0) {
           ghost.setAttribute('opacity', 0); ghostPath.setAttribute('opacity', 0);
           note.innerHTML = 'Selecciona una traslación y presiona <strong>Trasladar</strong>.';
-          $('#go').disabled = true; return;
+          $('#go').disabled = true; outWarned = false; return;
         }
-        const inside = Math.abs(tg.x) <= N && Math.abs(tg.y) <= N;
+        const lim = N - radius; // el borde de la circunferencia no debe pasar de ±10
+        const inside = Math.abs(tg.x) <= lim && Math.abs(tg.y) <= lim;
+        ghost.setAttribute('r', radius * unit);
         ghost.setAttribute('cx', PX(tg.x)); ghost.setAttribute('cy', PY(tg.y)); ghost.setAttribute('opacity', inside ? 1 : .3);
         ghostPath.setAttribute('points', ptsToStr(pathPoints(center, dx, dy, firstAxis || 'h')));
         ghostPath.setAttribute('opacity', inside ? .9 : .3);
         $('#go').disabled = !inside || animating;
+        if (inside) { outWarned = false; }
+        else if (!outWarned) { outWarned = true; speakOnce('Debes seleccionar otro desplazamiento que no saque la circunferencia del plano cartesiano.'); }
         note.innerHTML = inside
           ? `Traslación: <strong>${describe(counts)}</strong>. Nueva posición del centro: <strong>(${tg.x}, ${tg.y})</strong>.`
-          : `La nueva posición (${tg.x}, ${tg.y}) queda fuera del plano (−10 a 10). Ajusta la traslación.`;
+          : `Ese desplazamiento sacaría la circunferencia fuera del plano cartesiano. Elige otro desplazamiento.`;
       }
 
       function animate(g, from, dx, dy, order, done) {
@@ -410,7 +432,7 @@
       $('#go').addEventListener('click', () => {
         if (animating) return;
         const { dx, dy } = delta(); if (dx === 0 && dy === 0) return;
-        const tg = target(); if (Math.abs(tg.x) > N || Math.abs(tg.y) > N) return;
+        const tg = target(); if (Math.abs(tg.x) > N - radius || Math.abs(tg.y) > N - radius) return;
         const from = { ...center }, desc = describe(counts), order = firstAxis || 'h';
         // circunferencia de salida en azul (queda visible)
         place(originG, from.x, from.y); paint(originG, BLUE); showG(originG, true);
@@ -428,28 +450,26 @@
         });
       });
 
-      $('#clearSel').addEventListener('click', () => {
-        if (animating) return;
-        counts.este = counts.oeste = counts.norte = counts.sur = 0;
-        firstAxis = null;
-        refreshCounts(); showGhost(); updateOpPreview();
-      });
-
-      $('#reset').addEventListener('click', () => {
-        if (animating) return;
+      // coloca la circunferencia activa en su posición inicial y pone todo a cero
+      function placeStart() {
         center = { ...startPos }; hasMoved = false;
         counts.este = counts.oeste = counts.norte = counts.sur = 0;
-        firstAxis = null;
+        firstAxis = null; outWarned = false;
         showG(originG, false);
         moveTrail.setAttribute('opacity', 0);
         paint(movingG, BLUE); place(movingG, center.x, center.y);
         refreshCounts(); updateResults(); showGhost();
         opEmpty('Selecciona una dirección para ver el cálculo del nuevo centro.');
-      });
+      }
+      // Reiniciar: nueva circunferencia (radio y posición aleatorios) y contadores a cero
+      function newCircle() { generateCircle(); placeStart(); }
+
+      $('#clearSel').addEventListener('click', () => { if (animating) return; newCircle(); });
+      $('#reset').addEventListener('click', () => { if (animating) return; placeStart(); });
 
       // --- Audios hablados (español neutro) ---
       const audioTexts = {
-        instr: 'Toca cada dirección (Este, Norte, Oeste o Sur) para desplazar el centro de la circunferencia una unidad hacia la dirección que deseas. Luego presiona la tecla Trasladar para animar la traslación.',
+        instr: 'Toca cada dirección (Este, Norte, Oeste o Sur) para desplazar el centro de la circunferencia una unidad hacia la dirección que deseas. Luego presiona la tecla Trasladar para animar la traslación. Al tocar el botón Reiniciar se genera, en forma aleatoria, una circunferencia de radio uno, radio dos o radio tres, en una posición aleatoria sin salirse del plano cartesiano. El botón Volver al inicio regresa la circunferencia a la posición inicial donde apareció.',
         horiz: 'Al trasladar el centro hacia el Este, o hacia la derecha, se suma el valor indicado a la coordenada equis del centro. Pero si se indica que se desplaza hacia el Oeste, o hacia la izquierda, se le resta el valor del desplazamiento a la coordenada equis del centro.',
         vert: 'Al trasladar el centro hacia el Norte, o hacia arriba, se suma el valor indicado a la coordenada ye del centro. Pero si se indica que se desplaza hacia el Sur, o hacia abajo, se le resta el valor del desplazamiento a la coordenada ye del centro.'
       };
@@ -484,6 +504,16 @@
         u.onerror = () => { setBtn(btn, false); if (curBtn === btn) curBtn = null; };
         curBtn = btn; setBtn(btn, true); synth.speak(u);
       }
+      // aviso hablado puntual (sin botón); detiene cualquier audio en curso
+      function speakOnce(text) {
+        if (!synth) { $('#moveNote').textContent = text; return; }
+        synth.cancel();
+        if (curBtn) { setBtn(curBtn, false); curBtn = null; }
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-419'; u.rate = 0.98; u.pitch = 1;
+        const v = pickSpanishVoice(); if (v) u.voice = v;
+        synth.speak(u);
+      }
       $('#instrBtn').addEventListener('click', () => playAudio(audioTexts.instr, $('#instrBtn')));
       document.querySelectorAll('[data-audio]').forEach(b =>
         b.addEventListener('click', () => playAudio(audioTexts[b.dataset.audio], b)));
@@ -491,6 +521,7 @@
       if (synth && typeof synth.onvoiceschanged !== 'undefined') synth.onvoiceschanged = pickSpanishVoice;
 
       // init
+      generateCircle();
       paint(movingG, BLUE); place(movingG, center.x, center.y); showG(movingG, true);
       showG(originG, false);
       updateResults(); refreshCounts(); showGhost();
