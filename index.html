@@ -963,7 +963,13 @@
         { enun: `Un aspersor riega una zona circular de radio 4 m con centro en (−6, −2). El jardinero lo traslada 9 m al este y 5 m al norte. ¿Cuál es la representación algebraica de la circunferencia de riego en la nueva ubicación?`,
           sol: buildSol({ x: -6, y: -2 }, 4, 9, 5) },
         { enun: `Sea la circunferencia C: (x − 2)${S2} + (y + 5)${S2} = 49 y C′ la circunferencia obtenida al trasladar C tres unidades a la izquierda y seis unidades hacia arriba. ¿Cuál es la representación algebraica de C′?`,
-          sol: buildSol({ x: 2, y: -5 }, 7, -3, 6) }
+          sol: buildSol({ x: 2, y: -5 }, 7, -3, 6) },
+        { enun: `Una cámara de vigilancia se colocó en un lugar ubicado a 3 km al este y 2 km al norte de la sala de control, la cual se considera como el origen de un sistema de coordenadas. El alcance máximo de la zona vigilada por la cámara es 1 km a su alrededor. La siguiente representación gráfica muestra las ubicaciones M de la cámara, G de la sala de control y C de la circunferencia del alcance máximo. Además, la cámara se trasladó, desde su ubicación actual, 2 km al sur y 4 km al oeste. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 3, y: 2, label: 'M' }, r: 1, origin: 'G' },
+          sol: buildSol({ x: 3, y: 2 }, 1, -4, -2) },
+        { enun: `Un sensor de movimiento vigila una zona circular cuyo alcance máximo es 2 m a su alrededor y está ubicado 4 m al este y 5 m al norte de la puerta de una casa, la cual se considera el origen de un sistema de coordenadas. La siguiente representación gráfica muestra las ubicaciones S del sensor, P de la puerta y C de la circunferencia del alcance máximo. Luego el sensor se traslada 6 m al oeste y 3 m al sur. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 4, y: 5, label: 'S' }, r: 2, origin: 'P' },
+          sol: buildSol({ x: 4, y: 5 }, 2, -6, -3) }
       ];
 
       const ejWrap = $('#ejemploWrap');
