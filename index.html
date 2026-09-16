@@ -42,13 +42,80 @@
     header.hero h1 { margin: 0; font-size: clamp(1.5rem, 4.4vw, 2.6rem); line-height: 1.1; }
     header.hero p { margin: 12px auto 0; max-width: 660px; color: #dceff8; font-size: clamp(.98rem, 2.1vw, 1.12rem); }
 
-    .tabs { display: flex; gap: 8px; margin: 20px 0 0; flex-wrap: wrap; }
-    .tab { border: 0; border-radius: 14px 14px 0 0; padding: 12px 22px; min-height: 46px;
-      background: rgba(255,253,248,.7); color: var(--blue-dark); font-weight: 800; font-size: 1rem; }
-    .tab.active { background: var(--paper); box-shadow: 0 -4px 14px rgba(18,58,90,.08); }
+    /* Pestañas como botones premium */
+    .tabs { display: flex; gap: 12px; margin: 22px 0 16px; flex-wrap: wrap; justify-content: center; }
+    .tab { border: 2px solid transparent; border-radius: 999px; padding: 12px 26px; min-height: 50px;
+      background: linear-gradient(135deg, #eaf6fb, #d6ebf4); color: var(--blue-dark); font-weight: 800; font-size: 1.02rem;
+      box-shadow: 0 5px 0 #c3dae6, 0 12px 24px rgba(18,58,90,.12); transition: transform .12s, box-shadow .12s, background .2s; }
+    .tab:hover { transform: translateY(-2px); }
+    .tab:active { transform: translateY(3px); box-shadow: 0 2px 0 #c3dae6; }
+    .tab.active { background: linear-gradient(135deg, #176f98, #123a5a); color: #fff; border-color: var(--gold);
+      box-shadow: 0 5px 0 #0e2f49, 0 12px 26px rgba(18,58,90,.22); }
 
-    .panel { border: 1px solid rgba(18,58,90,.14); border-radius: 0 22px 22px 22px;
+    .panel { border: 1px solid rgba(18,58,90,.14); border-radius: 22px;
       background: var(--paper); box-shadow: var(--shadow); padding: clamp(16px, 3vw, 28px); }
+
+    /* Botón premium redondeado (Teoría, etc.) */
+    .pill-btn { display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--gold);
+      border-radius: 999px; padding: 11px 24px; min-height: 48px; background: linear-gradient(135deg,#fff6df,#f6e2ad);
+      color: #6a4a06; font-weight: 800; font-size: 1rem; box-shadow: 0 5px 0 #e2c574, 0 10px 22px rgba(120,90,10,.14);
+      transition: transform .12s, box-shadow .12s; }
+    .pill-btn:hover { transform: translateY(-2px); }
+    .pill-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e2c574; }
+    .pill-btn.open { background: linear-gradient(135deg,#176f98,#123a5a); color:#fff; border-color:#0e2f49; box-shadow:0 5px 0 #0e2f49; }
+
+    /* Sección Problemas de traslación */
+    .prob-top { display: flex; justify-content: center; margin-bottom: 12px; }
+    .prob-intro { text-align:center; color:#4a6675; font-size:.95rem; margin: 0 0 14px; }
+    .teoria { border: 1px solid #d7e3ea; border-radius: 16px; background: #fff; padding: 14px; margin-bottom: 18px; }
+    .teoria .rec { padding: 12px 15px; color:#254a5e; font-family: Arial, Helvetica, sans-serif; font-size: 11.5pt; line-height:1.6; }
+    .ejemplo { margin-top: 14px; border: 1px solid #c9dae4; border-radius: 14px; overflow: hidden; }
+    .ejemplo .ej-head { background: var(--blue-dark); color:#fff; font-weight: 800; padding: 10px 15px; }
+    .ejemplo .ej-body { padding: 14px 16px; font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color:#12344b; line-height:1.55; }
+    .paso { margin: 12px 0 4px; font-weight: 800; color: var(--blue-dark); }
+    .mathline { font-family: Arial, Helvetica, sans-serif; font-weight: 800; color:#12344b; margin: 4px 0; }
+    .mathline.big { font-size: 1.22rem; }
+    sup { font-size: .72em; }
+
+    .item { border: 1px solid #d7e3ea; border-radius: 18px; background: #fff; box-shadow: var(--shadow);
+      padding: 18px; margin: 18px 0; font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color:#152f40; }
+    .item .num { display:inline-flex; align-items:center; justify-content:center; min-width: 30px; height:30px;
+      border-radius: 999px; background: var(--blue-dark); color:#fff; font-weight: 800; font-size: .92rem; margin-right: 8px; vertical-align: middle; }
+    .item .enun { font-family: Arial, Helvetica, sans-serif; font-size: 12pt; line-height: 1.5; margin: 0; }
+    .item .given { font-weight: 800; color:#12344b; margin: 8px 0; }
+    .scene { display:block; width: min(360px, 100%); height:auto; margin: 12px auto; background:#fff; }
+    .opts { display: grid; gap: 10px; margin: 14px 0 6px; }
+    .opts-graf { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap:12px; margin:14px 0 6px; }
+    .opt { display:flex; align-items:center; gap: 10px; border: 2px solid #cdd9e1; border-radius: 12px;
+      padding: 10px 14px; background:#fff; text-align:left; font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color:#152f40;
+      cursor:pointer; transition: border-color .15s, background .15s; }
+    .opt:hover { border-color: var(--blue); }
+    .opt .key { font-weight: 800; color: var(--blue-dark); min-width: 24px; }
+    .opt .otext { flex: 1; }
+    .opt .mark { margin-left: auto; font-weight: 900; font-size: 1.15rem; min-width: 18px; text-align:center; }
+    .opt-scene { flex-direction: column; align-items: stretch; }
+    .opt-scene .ohead { display:flex; justify-content: space-between; align-items:center; }
+    .opt.correct { border-color: #1a9e57; background: #e9f9f0; }
+    .opt.correct .mark { color:#1a9e57; }
+    .opt.wrong { border-color: #d64545; background: #fdeaee; }
+    .opt.wrong .mark { color:#d64545; }
+    .fb { margin: 8px 0 0; font-weight: 800; }
+    .fb.ok { color:#1a9e57; }
+    .fb.no { color:#d64545; }
+    .solucion { margin-top: 12px; border-left: 5px solid var(--gold); background:#fffdf5;
+      border-radius: 0 12px 12px 0; padding: 12px 16px; font-family: Arial, Helvetica, sans-serif; font-size: 11.5pt; color:#3a3013; line-height:1.55; }
+    .solucion h4 { margin: 0 0 8px; color: var(--blue-dark); }
+    .solucion p { margin: 5px 0; }
+    .item-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top: 14px; }
+    .act-btn { display:inline-flex; align-items:center; gap:6px; border:2px solid #bcd2dd; border-radius: 999px;
+      padding: 8px 16px; min-height: 42px; background:#fff; color: var(--blue-dark); font-weight: 800; font-size:.9rem; }
+    .act-btn:hover { border-color: var(--blue); }
+    @media print {
+      body * { visibility: hidden !important; }
+      .item.printing, .item.printing * { visibility: visible !important; }
+      .item.printing { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+      .item.printing .item-actions, .item.printing .fb { display: none !important; }
+    }
 
     .lab { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(16px, 3vw, 26px); align-items: start; }
     @media (max-width: 860px) { .lab { grid-template-columns: 1fr; } }
@@ -142,10 +209,11 @@
     </header>
 
     <div class="tabs" role="tablist">
-      <button class="tab active" role="tab" aria-selected="true" type="button">Laboratorio</button>
+      <button class="tab active" id="tabLab" role="tab" aria-selected="true" aria-controls="panelLab" type="button">Laboratorio</button>
+      <button class="tab" id="tabProb" role="tab" aria-selected="false" aria-controls="panelProb" type="button">Problemas de traslación</button>
     </div>
 
-    <section class="panel" role="tabpanel" aria-label="Laboratorio">
+    <section class="panel" id="panelLab" role="tabpanel" aria-label="Laboratorio">
       <div class="lab">
         <div>
           <div class="plane-card">
@@ -211,6 +279,49 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="panel" id="panelProb" role="tabpanel" aria-label="Problemas de traslación" hidden>
+      <div class="prob-top">
+        <button id="btnTeoria" class="pill-btn" type="button" aria-expanded="false">📘 Teoría</button>
+        <button id="btnNuevo" class="pill-btn" type="button">🔄 Nuevo ítem</button>
+      </div>
+      <p class="prob-intro">Selecciona una opción. Si es correcta, su borde se marca en verde con un ✓; si es incorrecta, se muestra la solución paso a paso. Usa <strong>Nuevo ítem</strong> para practicar con otro problema.</p>
+
+      <div id="teoria" class="teoria" hidden>
+        <div class="op-box">
+          <div class="op-head">La traslación con suma y resta</div>
+          <div class="op-audio">
+            <button class="mini-audio" type="button" data-audio="horiz" aria-pressed="false">
+              <span class="instr-ic" aria-hidden="true">🔊</span> Traslación horizontal</button>
+            <button class="mini-audio" type="button" data-audio="vert" aria-pressed="false">
+              <span class="instr-ic" aria-hidden="true">🔊</span> Traslación vertical</button>
+          </div>
+          <div class="rec">
+            Para trasladar una circunferencia se mueve su <strong>centro</strong> y el <strong>radio no cambia</strong>.
+            <br>• Traslación horizontal: al <strong>este</strong> (derecha) se <strong>suma</strong> a la coordenada x; al <strong>oeste</strong> (izquierda) se <strong>resta</strong> a la coordenada x.
+            <br>• Traslación vertical: al <strong>norte</strong> (arriba) se <strong>suma</strong> a la coordenada y; al <strong>sur</strong> (abajo) se <strong>resta</strong> a la coordenada y.
+          </div>
+        </div>
+
+        <div class="ejemplo">
+          <div class="ej-head">Ejemplo resuelto</div>
+          <div class="ej-body">
+            Una circunferencia de radio <strong>5</strong> tiene su centro en la posición <strong>(3, −4)</strong>, la cual representa el alcance máximo de la señal de un celular ubicado en una bodega. Luego su dueño traslada el celular <strong>5 m al oeste</strong> y <strong>7 m al norte</strong>. ¿Cuál es la representación algebraica de la circunferencia?
+            <p class="paso">Paso 1. Ubicar la nueva posición del centro</p>
+            En x (oeste, se resta): 3 − 5 = −2. &nbsp;&nbsp; En y (norte, se suma): −4 + 7 = 3.<br>
+            El nuevo centro es <strong>(−2, 3)</strong> y el radio sigue siendo <strong>5</strong>.
+            <p class="paso">Paso 2. Representación algebraica de la circunferencia</p>
+            <p class="mathline">(x − h)<sup>2</sup> + (y − k)<sup>2</sup> = r<sup>2</sup></p>
+            <p style="margin:2px 0 8px;color:#6d8695;">donde (h, k) son las coordenadas del centro y r es el radio.</p>
+            Se sustituye h = −2, k = 3 y r = 5:
+            <p class="mathline big">(x − −2)<sup>2</sup> + (y − 3)<sup>2</sup> = 5<sup>2</sup></p>
+            <p class="mathline big">(x + 2)<sup>2</sup> + (y − 3)<sup>2</sup> = 25</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="itemsWrap"></div>
     </section>
 
     <footer class="credit"><strong>Elaborado por: Alberto Jiménez Ruiz</strong><br>Asesor Regional de Matemática DRE-Cartago-DAP-2026</footer>
@@ -526,6 +637,298 @@
       showG(originG, false);
       updateResults(); refreshCounts(); showGhost();
       opEmpty('Selecciona una dirección para ver el cálculo del nuevo centro.');
+    })();
+  </script>
+
+  <!-- Librerías para exportar a PDF (si hay conexión); si no, se usa Imprimir -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    (() => {
+      'use strict';
+      const $ = (s, r = document) => r.querySelector(s);
+      const NS = 'http://www.w3.org/2000/svg';
+      const els = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+      /* ---------- Pestañas ---------- */
+      const tabLab = $('#tabLab'), tabProb = $('#tabProb');
+      const panelLab = $('#panelLab'), panelProb = $('#panelProb');
+      function showTab(prob) {
+        tabProb.classList.toggle('active', prob); tabLab.classList.toggle('active', !prob);
+        tabProb.setAttribute('aria-selected', String(prob)); tabLab.setAttribute('aria-selected', String(!prob));
+        panelProb.hidden = !prob; panelLab.hidden = prob;
+        if (window.speechSynthesis) speechSynthesis.cancel();
+      }
+      tabLab.addEventListener('click', () => showTab(false));
+      tabProb.addEventListener('click', () => showTab(true));
+
+      const btnTeoria = $('#btnTeoria'), teoria = $('#teoria');
+      btnTeoria.addEventListener('click', () => {
+        const open = teoria.hidden; teoria.hidden = !open;
+        btnTeoria.classList.toggle('open', open); btnTeoria.setAttribute('aria-expanded', String(open));
+      });
+
+      /* ---------- Utilidades matemáticas ---------- */
+      const nf = v => v < 0 ? '−' + Math.abs(v) : String(v);
+      const S2 = '<sup>2</sup>';
+      const term = (v, vn) => v === 0 ? `${vn}${S2}` : `(${vn} ${v > 0 ? '−' : '+'} ${Math.abs(v)})${S2}`;
+      const describeMove = (dx, dy) => {
+        const p = [];
+        if (dx > 0) p.push(`${dx} al este`); if (dx < 0) p.push(`${-dx} al oeste`);
+        if (dy > 0) p.push(`${dy} al norte`); if (dy < 0) p.push(`${-dy} al sur`);
+        return p.join(' y ');
+      };
+      // Solución paso a paso a partir del centro inicial, radio y traslación (dx este+, dy norte+)
+      function buildSol(c0, r, dx, dy) {
+        const nx = c0.x + dx, ny = c0.y + dy, rr = r * r;
+        const opx = dx === 0 ? `${c0.x} (no cambia)` : `${c0.x} ${dx > 0 ? '+' : '−'} ${Math.abs(dx)} = ${nx}`;
+        const opy = dy === 0 ? `${c0.y} (no cambia)` : `${c0.y} ${dy > 0 ? '+' : '−'} ${Math.abs(dy)} = ${ny}`;
+        return `<h4>Solución paso a paso</h4>
+          <p class="paso">Paso 1. Ubicar la nueva posición del centro</p>
+          <p>Posición inicial del centro: <strong>(${c0.x}, ${c0.y})</strong> &nbsp;·&nbsp; radio: <strong>${r}</strong>.</p>
+          <p>Traslación: <strong>${describeMove(dx, dy)}</strong>.</p>
+          <p>En x: ${opx}. &nbsp;&nbsp; En y: ${opy}.</p>
+          <p>Nuevo centro: <strong>(${nx}, ${ny})</strong>. El radio no cambia: <strong>${r}</strong>.</p>
+          <p class="paso">Paso 2. Representación algebraica de la circunferencia</p>
+          <p class="mathline">(x − h)${S2} + (y − k)${S2} = r${S2}</p>
+          <p>Se sustituye h = ${nf(nx)}, k = ${nf(ny)} y r = ${r}:</p>
+          <p class="mathline big">(x − ${nf(nx)})${S2} + (y − ${nf(ny)})${S2} = ${r}${S2}</p>
+          <p class="mathline big">${term(nx, 'x')} + ${term(ny, 'y')} = ${rr}</p>`;
+      }
+
+      /* ---------- Dibujo del plano ---------- */
+      function autoView(c0, r) {
+        const pad = Math.max(1, Math.round(r * 0.6));
+        return {
+          xmin: Math.min(0, c0.x - r) - pad, xmax: Math.max(0, c0.x + r) + pad,
+          ymin: Math.min(0, c0.y - r) - pad, ymax: Math.max(0, c0.y + r) + pad
+        };
+      }
+      function buildScene(cfg) {
+        const view = cfg.view || autoView(cfg.center, cfg.r);
+        const { xmin, xmax, ymin, ymax } = view;
+        const W = 340, H = 280, ml = 44, mr = 30, mt = 24, mb = 42;
+        const unit = Math.min((W - ml - mr) / (xmax - xmin), (H - mt - mb) / (ymax - ymin));
+        const ox = ml + (0 - xmin) * unit, oy = mt + (ymax - 0) * unit;
+        const PX = x => ox + x * unit, PY = y => oy - y * unit;
+        const svg = els('svg', { viewBox: `0 0 ${W} ${H}`, class: 'scene', role: 'img', 'aria-label': 'Plano cartesiano con una circunferencia' });
+        const txt = (x, y, s, ex) => { const e = els('text', Object.assign({ x, y, 'font-family': 'Arial', 'font-size': 12, fill: '#111' }, ex || {})); e.textContent = s; svg.appendChild(e); };
+        // ejes con flechas
+        svg.appendChild(els('line', { x1: PX(xmin), y1: oy, x2: PX(xmax) + 4, y2: oy, stroke: '#111', 'stroke-width': 1.6 }));
+        svg.appendChild(els('line', { x1: ox, y1: PY(ymin) + 4, x2: ox, y2: PY(ymax) - 4, stroke: '#111', 'stroke-width': 1.6 }));
+        svg.appendChild(els('path', { d: `M${PX(xmax) + 6} ${oy} l-7 -4 v8 z`, fill: '#111' }));
+        svg.appendChild(els('path', { d: `M${ox} ${PY(ymax) - 6} l-4 7 h8 z`, fill: '#111' }));
+        txt(ox + 6, PY(ymax) - 8, 'y (norte)');
+        txt(W - 3, oy - 6, 'x (este)', { 'text-anchor': 'end' });
+        const c = cfg.center, rp = cfg.r * unit;
+        // guías punteadas y valores
+        const dash = { stroke: '#111', 'stroke-width': 1, 'stroke-dasharray': '4 3' };
+        if (c.x !== 0) { svg.appendChild(els('line', Object.assign({ x1: PX(c.x), y1: PY(c.y), x2: PX(c.x), y2: oy }, dash))); txt(PX(c.x), oy + 16, nf(c.x), { 'text-anchor': 'middle' }); }
+        if (c.y !== 0) { svg.appendChild(els('line', Object.assign({ x1: PX(c.x), y1: PY(c.y), x2: ox, y2: PY(c.y) }, dash))); txt(ox - 7, PY(c.y) + 4, nf(c.y), { 'text-anchor': 'end' }); }
+        // circunferencia + etiqueta C
+        svg.appendChild(els('circle', { cx: PX(c.x), cy: PY(c.y), r: rp, fill: 'none', stroke: '#111', 'stroke-width': 1.6 }));
+        txt(PX(c.x) + rp * 0.72, PY(c.y) - rp * 0.72, 'C', { 'font-weight': 700 });
+        // centro
+        svg.appendChild(els('circle', { cx: PX(c.x), cy: PY(c.y), r: 3.2, fill: '#111' }));
+        txt(PX(c.x) + 8, PY(c.y) + 4, c.label, { 'font-weight': 700 });
+        // origen
+        svg.appendChild(els('circle', { cx: ox, cy: oy, r: 3.2, fill: '#111' }));
+        if (cfg.origin) txt(ox - 7, oy + 16, cfg.origin, { 'text-anchor': 'end', 'font-weight': 700 });
+        return svg;
+      }
+
+      /* ---------- Banco de ítems ---------- */
+      const ITEMS = [
+        { enun: `Una cámara de vigilancia se colocó 2 km al este y 2 km al norte de la sala de control (origen). El alcance máximo de la zona vigilada por la cámara es 1 km a su alrededor. Luego la cámara se trasladó 1 km al sur y 3 km al oeste. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 2, y: 2, label: 'M' }, r: 1, origin: 'G' },
+          opts: [`(x + 1)${S2} + (y − 1)${S2} = 1`, `(x + 1)${S2} + (y − 3)${S2} = 1`, `(x − 3)${S2} + (y + 1)${S2} = 1`, `(x − 5)${S2} + (y − 1)${S2} = 1`],
+          correcta: 0, sol: buildSol({ x: 2, y: 2 }, 1, -3, -1) },
+
+        { enun: `Una torre de comunicación se ubicó 1 km al este y 2 km al norte de la entrada del parque (origen). El alcance máximo de la señal es 1 km a su alrededor. Luego la torre se trasladó 2 km al este y 1 km al sur. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 1, y: 2, label: 'T' }, r: 1, origin: 'P' },
+          opts: [`(x − 1)${S2} + (y − 2)${S2} = 1`, `(x − 2)${S2} + (y − 1)${S2} = 1`, `(x − 3)${S2} + (y − 1)${S2} = 1`, `(x − 1)${S2} + (y − 3)${S2} = 1`],
+          correcta: 2, sol: buildSol({ x: 1, y: 2 }, 1, 2, -1) },
+
+        { enun: `Una antena de telecomunicaciones se ubicó 2 km al este y 1 km al norte de la entrada al muelle (origen). El alcance máximo de la señal es 1 km a su alrededor. Luego la antena se trasladó 4 km al oeste y 2 km al sur. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 2, y: 1, label: 'M' }, r: 1, origin: 'V' },
+          opts: [`(x − 2)${S2} + (y − 1)${S2} = 1`, `(x − 4)${S2} + (y − 2)${S2} = 1`, `(x + 2)${S2} + (y + 1)${S2} = 1`, `(x + 1)${S2} + (y + 2)${S2} = 1`],
+          correcta: 2, sol: buildSol({ x: 2, y: 1 }, 1, -4, -2) },
+
+        { enun: `Un dispositivo electrónico que emite una señal circular se ubica 10 m al este y 5 m al norte del laboratorio (origen). El alcance máximo de la señal es 5 m a su alrededor. Si desde su ubicación actual el dispositivo se traslada 5 m al sur, ¿cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 10, y: 5, label: 'T' }, r: 5, origin: 'L' },
+          opts: [`(x − 10)${S2} + y${S2} = 25`, `(x − 15)${S2} + (y − 5)${S2} = 25`, `(x − 10)${S2} + (y − 10)${S2} = 25`, `(x − 5)${S2} + y${S2} = 25`],
+          correcta: 0, sol: buildSol({ x: 10, y: 5 }, 5, 0, -5) },
+
+        { enun: `Un vaso de base circular se ubica 20 cm al este y 15 cm al norte de una laptop (origen). El alcance máximo de la base del vaso es 3 cm a su alrededor. Si desde su ubicación actual el vaso se traslada 4 cm al sur y 8 cm al oeste, ¿cuál es la representación algebraica de la circunferencia del alcance de la base del vaso?`,
+          scene: { center: { x: 20, y: 15, label: 'T' }, r: 3, origin: 'D' },
+          opts: [`(x − 12)${S2} + (y − 11)${S2} = 9`, `(x − 16)${S2} + (y − 7)${S2} = 9`, `(x − 12)${S2} + (y − 11)${S2} = 6`, `(x − 16)${S2} + (y − 7)${S2} = 6`],
+          correcta: 0, sol: buildSol({ x: 20, y: 15 }, 3, -8, -4) },
+
+        { enun: `En una plaza se colocó un parlante redondo cuyo alcance máximo del sonido es 30 m a su alrededor. El parlante se ubica 90 m al este y 30 m al norte de la entrada a la plaza (origen). Si el parlante se trasladó 10 m al sur y 55 m al oeste, ¿cuál es la representación algebraica de la circunferencia del alcance del sonido en la nueva ubicación?`,
+          scene: { center: { x: 90, y: 30, label: 'G' }, r: 30, origin: 'N' },
+          opts: [`(x − 80)${S2} + (y + 25)${S2} = 900`, `(x − 35)${S2} + (y − 20)${S2} = 900`, `(x − 100)${S2} + (y − 40)${S2} = 900`, `(x − 35)${S2} + (y + 20)${S2} = 900`],
+          correcta: 1, sol: buildSol({ x: 90, y: 30 }, 30, -55, -10) },
+
+        { enun: `Sea D la circunferencia dada por (x − 3)<sup>2</sup> + (y − 1)<sup>2</sup> = 25 y D′ la circunferencia que se obtiene al trasladar D cuatro unidades hacia la izquierda (paralelo al eje x) y cinco unidades hacia abajo (paralelo al eje y). ¿Cuál es la representación algebraica de D′?`,
+          given: `Circunferencia D: (x − 3)${S2} + (y − 1)${S2} = 25 &nbsp;→&nbsp; centro (3, 1), radio 5.`,
+          scene: null,
+          opts: [`(x − 1)${S2} + (y + 4)${S2} = 25`, `(x + 1)${S2} + (y + 4)${S2} = 25`, `(x − 7)${S2} + (y + 4)${S2} = 25`, `(x + 7)${S2} + (y + 4)${S2} = 25`],
+          correcta: 1, sol: buildSol({ x: 3, y: 1 }, 5, -4, -5) },
+
+        { enun: `Sea C la circunferencia dada por (x − 1)<sup>2</sup> + y<sup>2</sup> = 81 y C′ la circunferencia que se obtiene al trasladar C dos unidades hacia la derecha (paralelo al eje x) y cinco unidades hacia abajo (paralelo al eje y). ¿Cuál es la representación algebraica de C′?`,
+          given: `Circunferencia C: (x − 1)${S2} + y${S2} = 81 &nbsp;→&nbsp; centro (1, 0), radio 9.`,
+          scene: null,
+          opts: [`(x + 3)${S2} + (y + 5)${S2} = 81`, `(x + 3)${S2} + (y − 5)${S2} = 81`, `(x − 3)${S2} + (y + 5)${S2} = 81`, `(x − 3)${S2} + (y − 5)${S2} = 81`],
+          correcta: 2, sol: buildSol({ x: 1, y: 0 }, 9, 2, -5) },
+
+        { enun: `Un dron realiza un análisis aéreo y su zona de cobertura es la circunferencia C: (x + 3)<sup>2</sup> + (y − 2)<sup>2</sup> = 16 (unidades en kilómetros). El operador reubica el dron sin cambiar su altura, de modo que la nueva zona de cobertura es C₁: (x − 1)<sup>2</sup> + (y + 1)<sup>2</sup> = 16. ¿Cuál fue la traslación aplicada al dron para obtener C₁?`,
+          given: `C: centro (−3, 2) &nbsp;·&nbsp; C₁: centro (1, −1) &nbsp;·&nbsp; radio 4.`,
+          scene: null,
+          opts: [`Cuatro unidades hacia el oeste y tres unidades hacia el norte.`, `Cuatro unidades hacia el oeste y tres unidades hacia el sur.`, `Cuatro unidades hacia el este y tres unidades hacia el norte.`, `Cuatro unidades hacia el este y tres unidades hacia el sur.`],
+          correcta: 3,
+          sol: `<h4>Solución paso a paso</h4>
+            <p class="paso">Paso 1. Identificar los centros</p>
+            <p>C: (x + 3)${S2} + (y − 2)${S2} = 16 → centro <strong>(−3, 2)</strong>.</p>
+            <p>C₁: (x − 1)${S2} + (y + 1)${S2} = 16 → centro <strong>(1, −1)</strong>.</p>
+            <p class="paso">Paso 2. Comparar los centros</p>
+            <p>En x: de −3 a 1, aumentó 4 → <strong>4 al este</strong>.</p>
+            <p>En y: de 2 a −1, disminuyó 3 → <strong>3 al sur</strong>.</p>
+            <p>La traslación fue <strong>4 unidades al este y 3 unidades al sur</strong> (opción D).</p>` },
+
+        { enun: `Un faro emite una señal luminosa cuyo alcance máximo es 2 km a su alrededor. El faro se ubica 4 km al este y 3 km al norte de un muelle (origen). Luego se traslada 5 km al oeste y 4 km al sur. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 4, y: 3, label: 'F' }, r: 2, origin: 'P' },
+          opts: [`(x + 1)${S2} + (y + 1)${S2} = 4`, `(x − 1)${S2} + (y − 1)${S2} = 4`, `(x + 4)${S2} + (y + 3)${S2} = 4`, `(x − 5)${S2} + (y − 4)${S2} = 4`],
+          correcta: 0, sol: buildSol({ x: 4, y: 3 }, 2, -5, -4) },
+
+        { enun: `Una antena de wifi tiene un alcance máximo de 3 m a su alrededor y su centro está en el punto (−2, 4) respecto de la entrada de un edificio (origen). Luego se traslada 6 m al este y 7 m al sur. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: -2, y: 4, label: 'A' }, r: 3, origin: 'E' },
+          opts: [`(x − 4)${S2} + (y + 3)${S2} = 9`, `(x + 2)${S2} + (y − 4)${S2} = 9`, `(x + 4)${S2} + (y − 3)${S2} = 9`, `(x − 4)${S2} + (y − 3)${S2} = 9`],
+          correcta: 0, sol: buildSol({ x: -2, y: 4 }, 3, 6, -7) },
+
+        { tipo: 'graf',
+          enun: `La circunferencia del alcance máximo de la señal de una antena ubicada en el pueblo H tiene centro (8, 3) y radio 3 (unidades en kilómetros). Para mejorar el servicio, la antena se trasladó al pueblo K, ubicado 2 km al sur de H. ¿Cuál gráfica representa la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 8, y: 3, label: 'H' }, r: 3, origin: '' },
+          opts: [
+            { scene: { center: { x: 8, y: 1, label: 'K' }, r: 3, origin: '' } },
+            { scene: { center: { x: 8, y: 5, label: 'K' }, r: 3, origin: '' } },
+            { scene: { center: { x: 10, y: 3, label: 'K' }, r: 3, origin: '' } },
+            { scene: { center: { x: 6, y: 3, label: 'K' }, r: 3, origin: '' } }
+          ],
+          correcta: 0,
+          sol: `<h4>Solución paso a paso</h4>
+            <p class="paso">Paso 1. Ubicar la nueva posición del centro</p>
+            <p>El centro de H está en <strong>(8, 3)</strong> y el radio es <strong>3</strong>.</p>
+            <p>Trasladar 2 km al sur: en y se resta 2 → 3 − 2 = 1. La x no cambia.</p>
+            <p>Nuevo centro: <strong>(8, 1)</strong>; el radio sigue siendo <strong>3</strong>.</p>
+            <p class="paso">Paso 2. Elegir la gráfica</p>
+            <p>La opción correcta es la que muestra la circunferencia con centro en (8, 1) y radio 3 (opción A).</p>` }
+      ];
+
+      /* ---------- Impresión y PDF ---------- */
+      function printItem(card) {
+        const w = window.open('', '_blank', 'width=820,height=1000');
+        if (!w) { alert('Permite las ventanas emergentes para imprimir el ítem.'); return; }
+        const clone = card.cloneNode(true);
+        clone.querySelectorAll('.item-actions').forEach(e => e.remove());
+        const css = `body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;margin:24px;line-height:1.5;}
+          .num{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:50%;background:#123a5a;color:#fff;font-weight:800;margin-right:6px;}
+          .scene{display:block;width:340px;height:auto;margin:10px auto;}
+          .opts,.opts-graf{margin:10px 0;} .opt{display:block;border:1px solid #999;border-radius:8px;padding:8px 12px;margin:6px 0;}
+          .key{font-weight:800;} .mark{display:none;} .fb{display:none;}
+          .solucion{border-left:4px solid #d9a406;background:#fffdf5;padding:10px 12px;border-radius:0 8px 8px 0;margin-top:10px;}
+          .mathline{font-weight:800;} .paso{font-weight:800;margin:8px 0 2px;} sup{font-size:.72em;}`;
+        w.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Ítem de traslación</title><style>${css}</style></head><body>${clone.outerHTML}</body></html>`);
+        w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (e) {} }, 400);
+      }
+      async function pdfItem(card) {
+        const jsPDFctor = window.jspdf && window.jspdf.jsPDF;
+        if (jsPDFctor && window.html2canvas) {
+          const acts = card.querySelector('.item-actions');
+          try {
+            if (acts) acts.style.visibility = 'hidden';
+            const canvas = await window.html2canvas(card, { scale: 2, backgroundColor: '#ffffff' });
+            if (acts) acts.style.visibility = '';
+            const pdf = new jsPDFctor('p', 'mm', 'a4');
+            const pw = pdf.internal.pageSize.getWidth() - 20;
+            const ph = canvas.height * pw / canvas.width;
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, pw, ph);
+            pdf.save('item-traslacion.pdf');
+            return;
+          } catch (e) { if (acts) acts.style.visibility = ''; }
+        }
+        printItem(card); // respaldo: elegir "Guardar como PDF" en el diálogo de impresión
+      }
+
+      /* ---------- Render de un ítem ---------- */
+      const keys = ['A', 'B', 'C', 'D'];
+      function renderItem(it, dispNum) {
+        const card = document.createElement('div'); card.className = 'item';
+        const en = document.createElement('p'); en.className = 'enun';
+        en.innerHTML = `<span class="num">${dispNum}</span>${it.enun}`;
+        card.appendChild(en);
+        if (it.given) { const g = document.createElement('p'); g.className = 'given'; g.innerHTML = it.given; card.appendChild(g); }
+        if (it.scene) card.appendChild(buildScene(it.scene));
+
+        const fb = document.createElement('p'); fb.className = 'fb'; fb.style.display = 'none';
+        const sol = document.createElement('div'); sol.className = 'solucion'; sol.hidden = true; sol.innerHTML = it.sol;
+
+        const optButtons = [];
+        if (it.tipo === 'graf') {
+          const wrap = document.createElement('div'); wrap.className = 'opts-graf';
+          it.opts.forEach((o, i) => {
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'opt opt-scene';
+            const head = document.createElement('div'); head.className = 'ohead';
+            head.innerHTML = `<span class="key">${keys[i]})</span><span class="mark"></span>`;
+            b.appendChild(head); b.appendChild(buildScene(o.scene));
+            wrap.appendChild(b); optButtons.push(b);
+          });
+          card.appendChild(wrap);
+        } else {
+          const wrap = document.createElement('div'); wrap.className = 'opts';
+          it.opts.forEach((o, i) => {
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'opt';
+            b.innerHTML = `<span class="key">${keys[i]})</span><span class="otext">${o}</span><span class="mark"></span>`;
+            wrap.appendChild(b); optButtons.push(b);
+          });
+          card.appendChild(wrap);
+        }
+        card.appendChild(fb); card.appendChild(sol);
+
+        const acts = document.createElement('div'); acts.className = 'item-actions';
+        const bp = document.createElement('button'); bp.type = 'button'; bp.className = 'act-btn'; bp.innerHTML = '🖨 Imprimir';
+        const bd = document.createElement('button'); bd.type = 'button'; bd.className = 'act-btn'; bd.innerHTML = '⬇ Descargar PDF';
+        acts.appendChild(bp); acts.appendChild(bd); card.appendChild(acts);
+        bp.addEventListener('click', () => printItem(card));
+        bd.addEventListener('click', () => pdfItem(card));
+
+        optButtons.forEach((b, i) => b.addEventListener('click', () => {
+          optButtons.forEach(x => { x.classList.remove('correct', 'wrong'); const m = x.querySelector('.mark'); if (m) m.textContent = ''; });
+          if (i === it.correcta) {
+            b.classList.add('correct'); const m = b.querySelector('.mark'); if (m) m.textContent = '✓';
+            fb.style.display = 'block'; fb.className = 'fb ok'; fb.textContent = '¡Correcto!'; sol.hidden = true;
+          } else {
+            b.classList.add('wrong'); const m = b.querySelector('.mark'); if (m) m.textContent = '✗';
+            const cb = optButtons[it.correcta]; cb.classList.add('correct'); const cm = cb.querySelector('.mark'); if (cm) cm.textContent = '✓';
+            fb.style.display = 'block'; fb.className = 'fb no'; fb.textContent = 'Respuesta incorrecta. Revisa la solución paso a paso:';
+            sol.hidden = false;
+          }
+        }));
+        return card;
+      }
+
+      /* ---------- Un ítem a la vez + botón Nuevo ítem ---------- */
+      const wrap = $('#itemsWrap');
+      let lastIdx = -1, count = 0;
+      function nuevoItem() {
+        let i;
+        if (ITEMS.length <= 1) i = 0;
+        else { do { i = Math.floor(Math.random() * ITEMS.length); } while (i === lastIdx); }
+        lastIdx = i; count++;
+        wrap.innerHTML = '';
+        wrap.appendChild(renderItem(ITEMS[i], count));
+      }
+      $('#btnNuevo').addEventListener('click', nuevoItem);
+      nuevoItem(); // primer ítem
     })();
   </script>
 </body>
