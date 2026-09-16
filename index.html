@@ -840,7 +840,7 @@
         const clone = card.cloneNode(true);
         clone.querySelectorAll('.item-actions').forEach(e => e.remove());
         const css = `body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;margin:24px;line-height:1.5;}
-          .num{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:50%;background:#123a5a;color:#fff;font-weight:800;margin-right:6px;}
+          .num{display:inline-flex;align-items:center;justify-content:center;width:26px;min-width:26px;height:26px;border-radius:50%;background:#123a5a;color:#fff;font-weight:800;margin-right:12px;vertical-align:middle;}
           .scene{display:block;width:340px;height:auto;margin:10px auto;}
           .opts,.opts-graf{margin:10px 0;} .opt{display:block;border:1px solid #999;border-radius:8px;padding:8px 12px;margin:6px 0;}
           .key{font-weight:800;} .mark{display:none;} .fb{display:none;}
@@ -1000,7 +1000,7 @@
       function renderExample(ex, num) {
         const card = document.createElement('div'); card.className = 'item';
         const en = document.createElement('p'); en.className = 'enun';
-        en.innerHTML = `<span class="ejemplo-label">Ejemplo ${num}</span>${ex.enun}`;
+        en.innerHTML = `<span class="num">${num}</span>${ex.enun}`;
         card.appendChild(en);
         if (ex.scene) card.appendChild(buildScene(ex.scene));
         const sol = document.createElement('div'); sol.className = 'solucion'; sol.innerHTML = ex.sol; card.appendChild(sol);
