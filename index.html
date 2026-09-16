@@ -64,8 +64,31 @@
     .pill-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e2c574; }
     .pill-btn.open { background: linear-gradient(135deg,#176f98,#123a5a); color:#fff; border-color:#0e2f49; box-shadow:0 5px 0 #0e2f49; }
 
+    /* Menú principal y navegación entre páginas */
+    .menu-wrap { text-align: center; }
+    .menu-sub { color:#4a6675; font-size:1rem; margin: 4px 0 18px; }
+    .menu { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+    @media (max-width: 720px){ .menu { grid-template-columns: 1fr; } }
+    .menu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center;
+      min-height: 150px; border:2px solid var(--gold); border-radius:22px; padding:22px 18px;
+      background: linear-gradient(135deg,#ffffff,#eaf6fb); color:var(--blue-dark); font-weight:900; font-size:1.12rem;
+      box-shadow: 0 6px 0 #d9e6ee, 0 16px 30px rgba(18,58,90,.14); transition: transform .12s, box-shadow .12s; cursor:pointer; }
+    .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #d9e6ee, 0 20px 34px rgba(18,58,90,.2); }
+    .menu-btn:active { transform: translateY(2px); box-shadow: 0 3px 0 #d9e6ee; }
+    .menu-btn .ic { font-size:2.2rem; line-height:1; }
+    .menu-btn small { font-weight:600; color:#5a7686; font-size:.82rem; max-width: 210px; }
+    .panel-nav { margin: 0 0 14px; }
+    .back-btn { display:inline-flex; align-items:center; gap:6px; border:2px solid #bcd2dd; border-radius:999px;
+      padding: 9px 18px; min-height:44px; background:#fff; color:var(--blue-dark); font-weight:800;
+      box-shadow:0 4px 0 #d3e1e7; transition:transform .12s, box-shadow .12s; }
+    .back-btn:hover { border-color: var(--blue); transform: translateY(-2px); }
+    .back-btn:active { transform: translateY(2px); box-shadow:0 1px 0 #d3e1e7; }
+
     /* Sección Problemas de traslación */
     .prob-top { display: flex; justify-content: center; margin-bottom: 12px; }
+    .ej-controls { display: flex; justify-content: center; margin: 16px 0 4px; }
+    .ejemplo-label { display:inline-block; background: var(--blue-dark); color:#fff; font-weight:800; font-size:.8rem;
+      border-radius: 999px; padding: 3px 12px; margin-right: 8px; }
     .prob-intro { text-align:center; color:#4a6675; font-size:.95rem; margin: 0 0 14px; }
     .teoria { border: 1px solid #d7e3ea; border-radius: 16px; background: #fff; padding: 14px; margin-bottom: 18px; }
     .teoria .rec { padding: 12px 15px; color:#254a5e; font-family: Arial, Helvetica, sans-serif; font-size: 11.5pt; line-height:1.6; }
@@ -205,15 +228,21 @@
   <main class="wrap">
     <header class="hero">
       <h1>Traslación de circunferencias</h1>
-      <p>Mueve la circunferencia por el plano con los botones de dirección y descubre cómo cambian su centro y su ecuación.</p>
+      <p>Explora la traslación de circunferencias en el plano cartesiano: experimenta en el laboratorio, repasa la teoría y practica con problemas.</p>
     </header>
 
-    <div class="tabs" role="tablist">
-      <button class="tab active" id="tabLab" role="tab" aria-selected="true" aria-controls="panelLab" type="button">Laboratorio</button>
-      <button class="tab" id="tabProb" role="tab" aria-selected="false" aria-controls="panelProb" type="button">Problemas de traslación</button>
-    </div>
+    <!-- Menú principal -->
+    <section id="menu" class="menu-wrap">
+      <p class="menu-sub">Elige una sección para comenzar:</p>
+      <div class="menu">
+        <button class="menu-btn" data-go="lab" type="button"><span class="ic" aria-hidden="true">🧪</span>Laboratorio<small>Mueve la circunferencia por el plano</small></button>
+        <button class="menu-btn" data-go="teoria" type="button"><span class="ic" aria-hidden="true">📘</span>Teoría<small>Suma y resta, con audios y ejemplo</small></button>
+        <button class="menu-btn" data-go="prob" type="button"><span class="ic" aria-hidden="true">📝</span>Problemas de traslación<small>Practica con ítems y soluciones</small></button>
+      </div>
+    </section>
 
-    <section class="panel" id="panelLab" role="tabpanel" aria-label="Laboratorio">
+    <section class="panel" id="panelLab" aria-label="Laboratorio" hidden>
+      <div class="panel-nav"><button class="back-btn" data-go="menu" type="button">← Volver al menú</button></div>
       <div class="lab">
         <div>
           <div class="plane-card">
@@ -281,14 +310,9 @@
       </div>
     </section>
 
-    <section class="panel" id="panelProb" role="tabpanel" aria-label="Problemas de traslación" hidden>
-      <div class="prob-top">
-        <button id="btnTeoria" class="pill-btn" type="button" aria-expanded="false">📘 Teoría</button>
-        <button id="btnNuevo" class="pill-btn" type="button">🔄 Nuevo ítem</button>
-      </div>
-      <p class="prob-intro">Selecciona una opción. Si es correcta, su borde se marca en verde con un ✓; si es incorrecta, se muestra la solución paso a paso. Usa <strong>Nuevo ítem</strong> para practicar con otro problema.</p>
-
-      <div id="teoria" class="teoria" hidden>
+    <section class="panel" id="panelTeoria" aria-label="Teoría" hidden>
+      <div class="panel-nav"><button class="back-btn" data-go="menu" type="button">← Volver al menú</button></div>
+      <div class="teoria">
         <div class="op-box">
           <div class="op-head">La traslación con suma y resta</div>
           <div class="op-audio">
@@ -304,23 +328,19 @@
           </div>
         </div>
 
-        <div class="ejemplo">
-          <div class="ej-head">Ejemplo resuelto</div>
-          <div class="ej-body">
-            Una circunferencia de radio <strong>5</strong> tiene su centro en la posición <strong>(3, −4)</strong>, la cual representa el alcance máximo de la señal de un celular ubicado en una bodega. Luego su dueño traslada el celular <strong>5 m al oeste</strong> y <strong>7 m al norte</strong>. ¿Cuál es la representación algebraica de la circunferencia?
-            <p class="paso">Paso 1. Ubicar la nueva posición del centro</p>
-            En x (oeste, se resta): 3 − 5 = −2. &nbsp;&nbsp; En y (norte, se suma): −4 + 7 = 3.<br>
-            El nuevo centro es <strong>(−2, 3)</strong> y el radio sigue siendo <strong>5</strong>.
-            <p class="paso">Paso 2. Representación algebraica de la circunferencia</p>
-            <p class="mathline">(x − h)<sup>2</sup> + (y − k)<sup>2</sup> = r<sup>2</sup></p>
-            <p style="margin:2px 0 8px;color:#6d8695;">donde (h, k) son las coordenadas del centro y r es el radio.</p>
-            Se sustituye h = −2, k = 3 y r = 5:
-            <p class="mathline big">(x − −2)<sup>2</sup> + (y − 3)<sup>2</sup> = 5<sup>2</sup></p>
-            <p class="mathline big">(x + 2)<sup>2</sup> + (y − 3)<sup>2</sup> = 25</p>
-          </div>
+        <div class="ej-controls">
+          <button id="btnOtroEj" class="pill-btn" type="button">🔀 Otro ejemplo</button>
         </div>
+        <div id="ejemploWrap"></div>
       </div>
+    </section>
 
+    <section class="panel" id="panelProb" aria-label="Problemas de traslación" hidden>
+      <div class="panel-nav"><button class="back-btn" data-go="menu" type="button">← Volver al menú</button></div>
+      <div class="prob-top">
+        <button id="btnNuevo" class="pill-btn" type="button">🔄 Nuevo ítem</button>
+      </div>
+      <p class="prob-intro">Selecciona una opción. Si es correcta, su borde se marca en verde con un ✓; si es incorrecta, se muestra la solución paso a paso. Usa <strong>Nuevo ítem</strong> para practicar con otro problema.</p>
       <div id="itemsWrap"></div>
     </section>
 
@@ -650,23 +670,15 @@
       const NS = 'http://www.w3.org/2000/svg';
       const els = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
 
-      /* ---------- Pestañas ---------- */
-      const tabLab = $('#tabLab'), tabProb = $('#tabProb');
-      const panelLab = $('#panelLab'), panelProb = $('#panelProb');
-      function showTab(prob) {
-        tabProb.classList.toggle('active', prob); tabLab.classList.toggle('active', !prob);
-        tabProb.setAttribute('aria-selected', String(prob)); tabLab.setAttribute('aria-selected', String(!prob));
-        panelProb.hidden = !prob; panelLab.hidden = prob;
+      /* ---------- Navegación menú ↔ páginas ---------- */
+      const views = { menu: $('#menu'), lab: $('#panelLab'), teoria: $('#panelTeoria'), prob: $('#panelProb') };
+      function go(name) {
+        Object.entries(views).forEach(([k, elx]) => { if (elx) elx.hidden = (k !== name); });
         if (window.speechSynthesis) speechSynthesis.cancel();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      tabLab.addEventListener('click', () => showTab(false));
-      tabProb.addEventListener('click', () => showTab(true));
-
-      const btnTeoria = $('#btnTeoria'), teoria = $('#teoria');
-      btnTeoria.addEventListener('click', () => {
-        const open = teoria.hidden; teoria.hidden = !open;
-        btnTeoria.classList.toggle('open', open); btnTeoria.setAttribute('aria-expanded', String(open));
-      });
+      document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+      go('menu'); // página principal
 
       /* ---------- Utilidades matemáticas ---------- */
       const nf = v => v < 0 ? '−' + Math.abs(v) : String(v);
@@ -770,19 +782,16 @@
           correcta: 1, sol: buildSol({ x: 90, y: 30 }, 30, -55, -10) },
 
         { enun: `Sea D la circunferencia dada por (x − 3)<sup>2</sup> + (y − 1)<sup>2</sup> = 25 y D′ la circunferencia que se obtiene al trasladar D cuatro unidades hacia la izquierda (paralelo al eje x) y cinco unidades hacia abajo (paralelo al eje y). ¿Cuál es la representación algebraica de D′?`,
-          given: `Circunferencia D: (x − 3)${S2} + (y − 1)${S2} = 25 &nbsp;→&nbsp; centro (3, 1), radio 5.`,
           scene: null,
           opts: [`(x − 1)${S2} + (y + 4)${S2} = 25`, `(x + 1)${S2} + (y + 4)${S2} = 25`, `(x − 7)${S2} + (y + 4)${S2} = 25`, `(x + 7)${S2} + (y + 4)${S2} = 25`],
           correcta: 1, sol: buildSol({ x: 3, y: 1 }, 5, -4, -5) },
 
         { enun: `Sea C la circunferencia dada por (x − 1)<sup>2</sup> + y<sup>2</sup> = 81 y C′ la circunferencia que se obtiene al trasladar C dos unidades hacia la derecha (paralelo al eje x) y cinco unidades hacia abajo (paralelo al eje y). ¿Cuál es la representación algebraica de C′?`,
-          given: `Circunferencia C: (x − 1)${S2} + y${S2} = 81 &nbsp;→&nbsp; centro (1, 0), radio 9.`,
           scene: null,
           opts: [`(x + 3)${S2} + (y + 5)${S2} = 81`, `(x + 3)${S2} + (y − 5)${S2} = 81`, `(x − 3)${S2} + (y + 5)${S2} = 81`, `(x − 3)${S2} + (y − 5)${S2} = 81`],
           correcta: 2, sol: buildSol({ x: 1, y: 0 }, 9, 2, -5) },
 
         { enun: `Un dron realiza un análisis aéreo y su zona de cobertura es la circunferencia C: (x + 3)<sup>2</sup> + (y − 2)<sup>2</sup> = 16 (unidades en kilómetros). El operador reubica el dron sin cambiar su altura, de modo que la nueva zona de cobertura es C₁: (x − 1)<sup>2</sup> + (y + 1)<sup>2</sup> = 16. ¿Cuál fue la traslación aplicada al dron para obtener C₁?`,
-          given: `C: centro (−3, 2) &nbsp;·&nbsp; C₁: centro (1, −1) &nbsp;·&nbsp; radio 4.`,
           scene: null,
           opts: [`Cuatro unidades hacia el oeste y tres unidades hacia el norte.`, `Cuatro unidades hacia el oeste y tres unidades hacia el sur.`, `Cuatro unidades hacia el este y tres unidades hacia el norte.`, `Cuatro unidades hacia el este y tres unidades hacia el sur.`],
           correcta: 3,
@@ -929,6 +938,60 @@
       }
       $('#btnNuevo').addEventListener('click', nuevoItem);
       nuevoItem(); // primer ítem
+
+      /* ---------- Ejemplos de la sección Teoría ---------- */
+      function buildSolTrasl(c0, c1, r) {
+        const dx = c1.x - c0.x, dy = c1.y - c0.y;
+        const dExpl = (a, b, mas, menos) => a === b ? 'no cambió' : (b > a ? `aumentó ${b - a} (${b - a} ${mas})` : `disminuyó ${a - b} (${a - b} ${menos})`);
+        return `<h4>Solución paso a paso</h4>
+          <p class="paso">Paso 1. Identificar los centros</p>
+          <p>Centro inicial: <strong>(${c0.x}, ${c0.y})</strong>. Centro final: <strong>(${c1.x}, ${c1.y})</strong>. El radio es <strong>${r}</strong> en ambas.</p>
+          <p class="paso">Paso 2. Comparar coordenada por coordenada</p>
+          <p>En x: de ${c0.x} a ${c1.x} → ${dExpl(c0.x, c1.x, 'al este', 'al oeste')}.</p>
+          <p>En y: de ${c0.y} a ${c1.y} → ${dExpl(c0.y, c1.y, 'al norte', 'al sur')}.</p>
+          <p>La traslación aplicada fue: <strong>${describeMove(dx, dy)}</strong>.</p>`;
+      }
+
+      const EXAMPLES = [
+        { enun: `Una circunferencia de radio 5 tiene su centro en la posición (3, −4), la cual representa el alcance máximo de la señal de un celular ubicado en una bodega. Luego su dueño traslada el celular 5 m al oeste y 7 m al norte. ¿Cuál es la representación algebraica de la circunferencia?`,
+          sol: buildSol({ x: 3, y: -4 }, 5, -5, 7) },
+        { enun: `Un dron realiza un análisis aéreo y su zona de cobertura es la circunferencia C: (x + 3)${S2} + (y − 2)${S2} = 16 (unidades en kilómetros). El operador reubica el dron sin cambiar su altura, de modo que la nueva zona de cobertura es C₁: (x − 1)${S2} + (y + 1)${S2} = 16. ¿Cuál fue la traslación aplicada al dron?`,
+          sol: buildSolTrasl({ x: -3, y: 2 }, { x: 1, y: -1 }, 4) },
+        { enun: `Una antena de telecomunicaciones cuyo alcance máximo es 2 km tiene su centro en (5, 6). Luego se traslada 8 km al oeste y 3 km al sur. ¿Cuál es la representación algebraica de la circunferencia del alcance en la nueva ubicación?`,
+          scene: { center: { x: 5, y: 6, label: 'A' }, r: 2, origin: 'O' },
+          sol: buildSol({ x: 5, y: 6 }, 2, -8, -3) },
+        { enun: `Un aspersor riega una zona circular de radio 4 m con centro en (−6, −2). El jardinero lo traslada 9 m al este y 5 m al norte. ¿Cuál es la representación algebraica de la circunferencia de riego en la nueva ubicación?`,
+          sol: buildSol({ x: -6, y: -2 }, 4, 9, 5) },
+        { enun: `Sea la circunferencia C: (x − 2)${S2} + (y + 5)${S2} = 49 y C′ la circunferencia obtenida al trasladar C tres unidades a la izquierda y seis unidades hacia arriba. ¿Cuál es la representación algebraica de C′?`,
+          sol: buildSol({ x: 2, y: -5 }, 7, -3, 6) }
+      ];
+
+      const ejWrap = $('#ejemploWrap');
+      let lastEj = -1, ejCount = 0;
+      function renderExample(ex, num) {
+        const card = document.createElement('div'); card.className = 'item';
+        const en = document.createElement('p'); en.className = 'enun';
+        en.innerHTML = `<span class="ejemplo-label">Ejemplo ${num}</span>${ex.enun}`;
+        card.appendChild(en);
+        if (ex.scene) card.appendChild(buildScene(ex.scene));
+        const sol = document.createElement('div'); sol.className = 'solucion'; sol.innerHTML = ex.sol; card.appendChild(sol);
+        const acts = document.createElement('div'); acts.className = 'item-actions';
+        const bp = document.createElement('button'); bp.type = 'button'; bp.className = 'act-btn'; bp.innerHTML = '🖨 Imprimir';
+        const bd = document.createElement('button'); bd.type = 'button'; bd.className = 'act-btn'; bd.innerHTML = '⬇ Descargar PDF';
+        acts.appendChild(bp); acts.appendChild(bd); card.appendChild(acts);
+        bp.addEventListener('click', () => printItem(card));
+        bd.addEventListener('click', () => pdfItem(card));
+        return card;
+      }
+      function otroEjemplo() {
+        let i;
+        if (EXAMPLES.length <= 1) i = 0;
+        else { do { i = Math.floor(Math.random() * EXAMPLES.length); } while (i === lastEj); }
+        lastEj = i; ejCount++;
+        ejWrap.innerHTML = ''; ejWrap.appendChild(renderExample(EXAMPLES[i], ejCount));
+      }
+      $('#btnOtroEj').addEventListener('click', otroEjemplo);
+      lastEj = 0; ejCount = 1; ejWrap.appendChild(renderExample(EXAMPLES[0], 1)); // primer ejemplo (el del celular)
     })();
   </script>
 </body>
