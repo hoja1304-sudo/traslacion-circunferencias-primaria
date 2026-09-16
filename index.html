@@ -719,7 +719,7 @@
       function buildScene(cfg) {
         const view = cfg.view || autoView(cfg.center, cfg.r);
         const { xmin, xmax, ymin, ymax } = view;
-        const W = 340, H = 280, ml = 44, mr = 30, mt = 24, mb = 42;
+        const W = 340, H = 280, ml = 44, mr = 62, mt = 24, mb = 42;
         const unit = Math.min((W - ml - mr) / (xmax - xmin), (H - mt - mb) / (ymax - ymin));
         const ox = ml + (0 - xmin) * unit, oy = mt + (ymax - 0) * unit;
         const PX = x => ox + x * unit, PY = y => oy - y * unit;
@@ -731,7 +731,7 @@
         svg.appendChild(els('path', { d: `M${PX(xmax) + 6} ${oy} l-7 -4 v8 z`, fill: '#111' }));
         svg.appendChild(els('path', { d: `M${ox} ${PY(ymax) - 6} l-4 7 h8 z`, fill: '#111' }));
         txt(ox + 6, PY(ymax) - 8, 'y (norte)');
-        txt(W - 3, oy - 6, 'x (este)', { 'text-anchor': 'end' });
+        txt(PX(xmax) + 12, oy, 'x (este)', { 'text-anchor': 'start', 'dominant-baseline': 'middle' });
         const c = cfg.center, rp = cfg.r * unit;
         // guías punteadas y valores
         const dash = { stroke: '#111', 'stroke-width': 1, 'stroke-dasharray': '4 3' };
