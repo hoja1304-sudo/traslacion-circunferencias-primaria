@@ -849,23 +849,46 @@
         w.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Ítem de traslación</title><style>${css}</style></head><body>${clone.outerHTML}</body></html>`);
         w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (e) {} }, 400);
       }
+      // convierte un <svg> en línea a PNG (html2canvas no rasteriza SVG de forma fiable)
+      function svgToImg(svg) {
+        return new Promise((resolve, reject) => {
+          const vb = (svg.getAttribute('viewBox') || '0 0 340 280').split(/\s+/).map(Number);
+          const w = svg.clientWidth || vb[2] || 340, h = svg.clientHeight || vb[3] || 280;
+          const clone = svg.cloneNode(true); clone.setAttribute('width', w); clone.setAttribute('height', h);
+          const xml = new XMLSerializer().serializeToString(clone);
+          const src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+          const im = new Image();
+          im.onload = () => { const s = 2, c = document.createElement('canvas'); c.width = w * s; c.height = h * s; const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(im, 0, 0, c.width, c.height); resolve({ url: c.toDataURL('image/png'), w, h }); };
+          im.onerror = reject; im.src = src;
+        });
+      }
       async function pdfItem(card) {
         const jsPDFctor = window.jspdf && window.jspdf.jsPDF;
-        if (jsPDFctor && window.html2canvas) {
-          const acts = card.querySelector('.item-actions');
-          try {
-            if (acts) acts.style.visibility = 'hidden';
-            const canvas = await window.html2canvas(card, { scale: 2, backgroundColor: '#ffffff' });
-            if (acts) acts.style.visibility = '';
-            const pdf = new jsPDFctor('p', 'mm', 'a4');
-            const pw = pdf.internal.pageSize.getWidth() - 20;
-            const ph = canvas.height * pw / canvas.width;
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, pw, ph);
-            pdf.save('item-traslacion.pdf');
-            return;
-          } catch (e) { if (acts) acts.style.visibility = ''; }
-        }
-        printItem(card); // respaldo: elegir "Guardar como PDF" en el diálogo de impresión
+        if (!(jsPDFctor && window.html2canvas)) { printItem(card); return; }
+        const restores = [];
+        try {
+          for (const svg of [...card.querySelectorAll('svg')]) {
+            try {
+              const r = await svgToImg(svg);
+              const img = document.createElement('img'); img.src = r.url; img.width = r.w; img.height = r.h;
+              img.className = 'scene'; img.style.display = 'block'; img.style.margin = '12px auto';
+              svg.style.display = 'none'; svg.parentNode.insertBefore(img, svg);
+              restores.push(() => { img.remove(); svg.style.display = ''; });
+              try { await img.decode(); } catch (e) {}
+            } catch (e) {}
+          }
+          const acts = card.querySelector('.item-actions'); if (acts) acts.style.visibility = 'hidden';
+          const canvas = await window.html2canvas(card, { scale: 2, backgroundColor: '#ffffff', imageTimeout: 0, useCORS: true });
+          if (acts) acts.style.visibility = '';
+          if (!canvas || !canvas.width || !canvas.height) throw new Error('captura vacía');
+          const pdf = new jsPDFctor('p', 'mm', 'a4');
+          const pageW = pdf.internal.pageSize.getWidth(), pageH = pdf.internal.pageSize.getHeight();
+          let w = pageW - 20, h = canvas.height * w / canvas.width;
+          if (h > pageH - 20) { h = pageH - 20; w = canvas.width * h / canvas.height; }
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', (pageW - w) / 2, 10, w, h);
+          pdf.save('item-traslacion.pdf');
+        } catch (e) { printItem(card); }
+        finally { restores.forEach(f => f()); }
       }
 
       /* ---------- Render de un ítem ---------- */
